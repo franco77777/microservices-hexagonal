@@ -6,7 +6,7 @@ spring:
       server:
         git:
           default-label: eureka
-          uri: https://github.com/franco77777/pragma
+          uri: https://github.com/franco77777/microservices-hexagonal
           search-paths: config-data
   application:
     name: config-service
