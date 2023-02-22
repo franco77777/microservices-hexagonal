@@ -15,12 +15,12 @@ import java.util.List;
 @FeignClient(name = "square-service")
 
 public interface RestaurantFeignClient {
-    @PostMapping("/api/restaurant")
+    @PostMapping("/square/restaurant")
     RestaurantModel createRestaurant(@RequestBody RestaurantModel restaurant);
-    @GetMapping("/api/restaurant")
+    @GetMapping("/square/restaurant")
     List<RestaurantModel> getAll();
 
-    @GetMapping("/{id}")
+    @GetMapping("/square/restaurant/{id}")
     List<RestaurantModel> getByUserId(@PathVariable("id") Long userId) ;
 }
 

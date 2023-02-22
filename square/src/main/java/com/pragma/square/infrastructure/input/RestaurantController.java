@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/restaurant")
+@RequestMapping("/square/restaurant")
 @RequiredArgsConstructor
 public class RestaurantController {
     private final IRestaurantHandler restaurantHandler;
