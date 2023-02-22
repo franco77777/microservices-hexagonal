@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "square", url = "localhost:8082/api/restaurant")
+@FeignClient(name = "square-service")
 
 public interface RestaurantFeignClient {
-    @PostMapping()
+    @PostMapping("/api/restaurant")
     RestaurantModel createRestaurant(@RequestBody RestaurantModel restaurant);
-    @GetMapping()
+    @GetMapping("/api/restaurant")
     List<RestaurantModel> getAll();
 
     @GetMapping("/{id}")

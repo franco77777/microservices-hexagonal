@@ -27,7 +27,7 @@ public class ObjectResController {
         System.out.println(AuthorityName.ROLE_CLIENT);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<UserResponseDto>> getAllUsers(){
         return ResponseEntity.ok(objectHandler.getAllObjects());
