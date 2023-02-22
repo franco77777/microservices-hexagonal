@@ -5,7 +5,7 @@ spring:
     config:
       server:
         git:
-          default-label: main
+          default-label: eureka
           uri: https://github.com/franco77777/pragma
           search-paths: config-data
   application:
