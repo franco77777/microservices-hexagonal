@@ -41,7 +41,7 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantNew);
     }
     public ResponseEntity<List<RestaurantModel>>fallbackGetRestaurant(@PathVariable("id") Long userId, RuntimeException e){
-       return new ResponseEntity("error in the database square whit the user" + userId, HttpStatus.OK);
+       return new ResponseEntity("error in the database square whit the user " + userId, HttpStatus.OK);
     }
     }
 
