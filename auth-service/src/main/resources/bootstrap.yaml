@@ -1,0 +1,12 @@
+
+spring:
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8083
+  application:
+    name: auth-service
+  config:
+
+
+

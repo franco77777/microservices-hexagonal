@@ -5,7 +5,7 @@ spring:
     config:
       server:
         git:
-          default-label: circuit-breaker
+          default-label: auth-jwt
           uri: https://github.com/franco77777/microservices-hexagonal
           search-paths: config-data
   application:
