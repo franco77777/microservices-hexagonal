@@ -6,7 +6,15 @@ spring:
       uri: http://localhost:8083
   application:
     name: auth-service
-  config:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_users
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: false
+    hibernate.ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 
 

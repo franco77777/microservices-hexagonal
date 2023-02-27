@@ -7,7 +7,6 @@ import org.mapstruct.ReportingPolicy;
 
 
 import java.util.List;
-
 @Mapper(componentModel = "spring", //decimos que spring lo tome como un bean y se puede injectar la dependencia
         unmappedTargetPolicy = ReportingPolicy.IGNORE, // ignora errores si no mapea algo
         unmappedSourcePolicy = ReportingPolicy.IGNORE)

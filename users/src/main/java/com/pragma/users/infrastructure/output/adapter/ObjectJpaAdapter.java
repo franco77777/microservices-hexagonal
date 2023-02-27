@@ -29,6 +29,7 @@ public class ObjectJpaAdapter  implements IObjectPersistencePort {
         UserEntity userEntity = service.register(objectEntityMapper.toEntity(userModel));
 
         return objectEntityMapper.toUserModel(userEntity);
+
         }
 
     @Override

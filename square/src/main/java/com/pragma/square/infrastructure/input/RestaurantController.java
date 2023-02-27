@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,9 +22,13 @@ import java.util.List;
 public class RestaurantController {
     private final IRestaurantHandler restaurantHandler;
     private final IRestaurantRepository restaurantRepository;
-
+    @PreAuthorize("hasRole('USER')")
     @GetMapping()
     public ResponseEntity<List<RestaurantResponseDto>> getAll() {
+    System.out.println("soy context");
+    System.out.println(SecurityContextHolder.getContext().getAuthentication());
+    System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+
 
         return ResponseEntity.ok(restaurantHandler.getAllRestaurants());
     }
