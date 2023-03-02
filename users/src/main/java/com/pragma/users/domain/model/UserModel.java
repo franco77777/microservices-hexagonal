@@ -15,6 +15,8 @@ public class UserModel {
     private AuthorityName roles;
     private String dni;
 
+
+
     public UserModel() {
     }
 
@@ -27,7 +29,10 @@ public class UserModel {
         this.email = email;
         this.roles = roles;
         this.dni = dni;
+
     }
+
+
 
     public Long getId() {
         return id;

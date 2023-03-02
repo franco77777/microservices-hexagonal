@@ -44,7 +44,7 @@ public class WebConfiguration {
                 .and()
                 .addFilterBefore(authFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic(Customizer.withDefaults())
                 .build();

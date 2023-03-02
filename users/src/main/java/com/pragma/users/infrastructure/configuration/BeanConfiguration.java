@@ -26,7 +26,7 @@ public class BeanConfiguration {
 
     private final IUserRepository objectRepository;
     private final IObjectEntityMapper objectEntityMapper;
-
+   private final PasswordEncoder passwordEncoder;
     private final UserService service;
 
     @Bean
@@ -35,27 +35,7 @@ public class BeanConfiguration {
     };
     @Bean
     public IObjectServicePort objectServicePort(){
-        return new ObjectUseCase(objectPersistencePort());    }
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return username -> objectRepository.findByEmail(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-//    }
-
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(userDetailsService());
-//        authProvider.setPasswordEncoder(passwordEncoder());
-//        return authProvider;
-//    }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-//        return config.getAuthenticationManager();
-//    }
-
+        return new ObjectUseCase(objectPersistencePort(),passwordEncoder);    }
 
 
 

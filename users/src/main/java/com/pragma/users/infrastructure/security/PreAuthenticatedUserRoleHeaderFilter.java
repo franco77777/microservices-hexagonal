@@ -24,6 +24,35 @@ import java.util.function.Function;
 
 public class PreAuthenticatedUserRoleHeaderFilter
         extends GenericFilterBean {
+
+    public void doFilter(ServletRequest servletRequest,
+                         ServletResponse servletResponse,
+                         FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        final String userEmail;
+        final String Roles;
+        final String UserId;
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            chain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+        jwt = authHeader.substring(7);
+        userEmail = extractUsername(jwt);
+        Roles = extractUserRole(jwt);
+        UserId = extractUserId(jwt);
+        List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Roles);
+        PreAuthenticatedAuthenticationToken authentication
+                = new PreAuthenticatedAuthenticationToken(
+                userEmail, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println("soy el pre context");
+        System.out.println(SecurityContextHolder.getContext());
+        chain.doFilter(servletRequest, servletResponse);
+    }
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);}
@@ -50,46 +79,6 @@ public class PreAuthenticatedUserRoleHeaderFilter
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    public void doFilter(ServletRequest servletRequest,
-                         ServletResponse servletResponse,
-                         FilterChain chain)
-            throws IOException, ServletException {
-
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
-        final String Roles;
-        final String UserId;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            chain.doFilter(servletRequest, servletResponse);
-            return;
-        }
-        jwt = authHeader.substring(7);
-        userEmail = extractUsername(jwt);
-        Roles = extractUserRole(jwt);
-        UserId = extractUserId(jwt);
-
-        System.out.println("osy roles");
-        System.out.println(Roles);
-        System.out.println("email");
-        System.out.println(userEmail);
-        System.out.println("sot id");
-        System.out.println(UserId);
-
-
-        String rolesString = "ROLE_ADMIN";
-        String userName = "franco";// extract the username
-        List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Roles);
-        PreAuthenticatedAuthenticationToken authentication
-                = new PreAuthenticatedAuthenticationToken(
-                userEmail, null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println("soy el pre context");
-        System.out.println(SecurityContextHolder.getContext());
-        chain.doFilter(servletRequest, servletResponse);
     }
 
 }

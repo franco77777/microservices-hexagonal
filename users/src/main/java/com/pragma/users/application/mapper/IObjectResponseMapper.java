@@ -7,6 +7,7 @@ import org.mapstruct.ReportingPolicy;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring", //decimos que spring lo tome como un bean y se puede injectar la dependencia
         unmappedTargetPolicy = ReportingPolicy.IGNORE, // ignora errores si no mapea algo
@@ -14,4 +15,5 @@ import java.util.List;
 public interface IObjectResponseMapper {
     UserResponseDto toUserResponseDto(UserModel userModel);
     List<UserResponseDto> toUserResponseList(List<UserModel> userModelList);
+
 }

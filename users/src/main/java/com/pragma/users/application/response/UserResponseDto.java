@@ -20,5 +20,7 @@ public class UserResponseDto {
     private AuthorityName roles;
     private String dni;
 
+
+
 }
 

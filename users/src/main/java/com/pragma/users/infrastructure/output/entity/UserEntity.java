@@ -36,6 +36,7 @@ public class UserEntity implements UserDetails{
     private String email;
     private String dni;
 
+
 @Enumerated(EnumType.STRING)
     private AuthorityName roles;
 
