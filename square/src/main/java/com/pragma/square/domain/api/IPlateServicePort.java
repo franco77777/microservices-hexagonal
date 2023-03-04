@@ -3,7 +3,6 @@ package com.pragma.square.domain.api;
 import com.pragma.square.application.request.PlateUpdateRequestDto;
 import com.pragma.square.domain.models.PlateModel;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Range;
 
 public interface IPlateServicePort {
     PlateModel savePlate(PlateModel plateModel, Long idRestaurant,Long categoryId);

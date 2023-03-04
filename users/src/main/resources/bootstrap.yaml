@@ -1,10 +1,10 @@
-server:
-    port: 8080
+#server:
+#    port: 8080
 spring:
-#    cloud:
-#         config:
-#             enabled: true
-#             uri: http://localhost:8083
+    cloud:
+         config:
+             enabled: true
+             uri: http://localhost:8083
     application:
          name: users-service
     datasource:

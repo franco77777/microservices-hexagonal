@@ -2,6 +2,7 @@ package com.pragma.square.infrastructure.output.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,14 +33,24 @@ public class PlateEntity {
 
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.EAGER,optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_category")
 
     private CategoryEntity idCategory;
-
     private Boolean active;
-@ManyToOne(fetch = FetchType.EAGER, optional = false)
-@JoinColumn(name = "id_restaurant")
-private RestaurantEntity idRestaurant;
+    private Integer quantity;
+    @ManyToOne()
+    @JsonIgnore
+    @JoinColumn(name="plates_id", insertable=false, updatable=false)
+    private OrderEntity order;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_restaurant")
+    @JsonIncludeProperties(value = {"id"})
+    private RestaurantEntity idRestaurant;
+//@OneToMany(mappedBy = "idPlate",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//@JsonIgnore
+//private List<OrderPlateEntity> orderPlate;
+
+
 
 }

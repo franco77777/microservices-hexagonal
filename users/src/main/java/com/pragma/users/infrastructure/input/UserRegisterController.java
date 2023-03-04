@@ -1,23 +1,20 @@
 package com.pragma.users.infrastructure.input;
-
 import com.pragma.users.application.handler.IObjectHandler;
 import com.pragma.users.application.mapper.IObjectRequestMapper;
 import com.pragma.users.application.request.UserRequestDto;
 import com.pragma.users.application.response.UserResponseDto;
-import com.pragma.users.domain.model.AuthenticationModel;
 import com.pragma.users.infrastructure.output.entity.TokenDto;
 import com.pragma.users.infrastructure.output.services.UserService;
 import com.pragma.users.infrastructure.output.utils.AuthorityName;
-import com.pragma.users.infrastructure.security.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/user/register")
@@ -31,6 +28,7 @@ public class UserRegisterController {
 
     @GetMapping("/all")
     public ResponseEntity<List<UserResponseDto>> getAllUsers(){
+
         System.out.println("soy security");
         System.out.println(SecurityContextHolder.getContext());
         return ResponseEntity.ok(objectHandler.getAllObjects());
@@ -53,10 +51,10 @@ public class UserRegisterController {
 
     //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/owner")
-    public ResponseEntity<TokenDto> saveOwner(@RequestBody @Valid UserRequestDto userRequestDto){
+    public ResponseEntity<UserResponseDto> saveOwner(@RequestBody @Valid UserRequestDto userRequestDto){
         UserResponseDto responseDto = objectHandler.saveObject(userRequestDto, AuthorityName.ROLE_OWNER);
-        TokenDto token = userService.registerToken(objectRequestMapper.toUserEntity(responseDto));
-        return new ResponseEntity<>(token, HttpStatus.CREATED);
+        //TokenDto token = userService.registerToken(objectRequestMapper.toUserEntity(responseDto));
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
    //@PreAuthorize("hasRole('OWNER')")

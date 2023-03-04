@@ -28,4 +28,7 @@ public class RestaurantEntity {
   @OneToMany(mappedBy = "idRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JsonIgnore
    private Set<PlateEntity> plateList = new HashSet<>();
+  @OneToMany(mappedBy = "idRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonIgnore
+  private List<OrderEntity> ordersList;
 }

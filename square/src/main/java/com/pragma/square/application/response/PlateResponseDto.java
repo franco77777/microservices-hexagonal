@@ -24,4 +24,5 @@ public class PlateResponseDto {
     private Boolean active;
 
     private RestaurantEntity idRestaurant;
+    private Integer quantity;
 }

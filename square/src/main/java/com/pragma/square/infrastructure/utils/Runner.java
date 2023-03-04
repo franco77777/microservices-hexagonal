@@ -1,19 +1,18 @@
 package com.pragma.square.infrastructure.utils;
 
 import com.pragma.square.infrastructure.output.entity.CategoryEntity;
+import com.pragma.square.infrastructure.output.entity.OrderEntity;
 import com.pragma.square.infrastructure.output.entity.PlateEntity;
 import com.pragma.square.infrastructure.output.entity.RestaurantEntity;
 import com.pragma.square.infrastructure.output.repository.ICategoryRepository;
+import com.pragma.square.infrastructure.output.repository.IOrderRepository;
 import com.pragma.square.infrastructure.output.repository.IPlateRepository;
 import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +22,8 @@ public class Runner implements CommandLineRunner {
 
 private final IPlateRepository plateRepository;
 private final ICategoryRepository categoryRepository;
+private final IOrderRepository orderRepository;
+private final IPlateRepository orderPlateRepository;
 
 
 
@@ -59,9 +60,47 @@ private final ICategoryRepository categoryRepository;
                 .idRestaurant(result)
                 .build();
 PlateEntity response = plateRepository.save(plate);
+RestaurantEntity restaurant1 = RestaurantEntity.builder()
+        .id(result.getId())
+        .build();
+
+        var plate2 = PlateEntity.builder()
+                .name("123435")
+                .price("123435")
+                .description("123435")
+                .imageUrl("123435")
+                .idCategory(categoryResult2)
+                .active(true)
+                .idRestaurant(restaurant1)
+                .build();
+        PlateEntity response2 = plateRepository.save(plate2);
 
         result.setPlateList(Set.of(response));
         RestaurantEntity result1 = restaurantRepository.save(result);
         System.out.println("soy plato");
         System.out.println(result1.toString());
+
+        List<PlateEntity> plateList = new ArrayList<>();
+        plateList.add(response);
+        plateList.add(response2);
+
+
+        OrderEntity order = OrderEntity.builder()
+                .idClient(1L)
+                .orderDate(new Date())
+                .status("pending")
+                .idChef(null)
+                .idRestaurant(result)
+                .plates(plateList)
+                .build();
+        orderRepository.save(order);
+
+Set<Long> ids = new HashSet<>();
+ids.add(1L);
+ids.add(1L);
+ids.add(2L);
+        System.out.println("soy ids");
+        System.out.println(ids);
+        System.out.println(ids.size());
+
     }}
