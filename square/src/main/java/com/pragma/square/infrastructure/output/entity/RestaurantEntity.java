@@ -1,7 +1,12 @@
 package com.pragma.square.infrastructure.output.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="restaurants")
@@ -20,4 +25,10 @@ public class RestaurantEntity {
     private String url;
     private Long userId;
     private String nit;
+  @OneToMany(mappedBy = "idRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonIgnore
+   private Set<PlateEntity> plateList = new HashSet<>();
+  @OneToMany(mappedBy = "idRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JsonIgnore
+  private List<OrderEntity> ordersList;
 }

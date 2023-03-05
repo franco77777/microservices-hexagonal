@@ -18,10 +18,10 @@ import java.lang.annotation.ElementType;
 public class UserRequestDto {
 @NotBlank(message = "name is required")
 @NotNull(message = "name is required")
-    private String username;
+    private String firstname;
     @NotBlank(message = "surname is required")
     @NotNull(message = "surname is required")
-    private String surname;
+    private String lastname;
     @NotBlank(message = "mobile is required")
     @NotNull(message = "cell phone is required")
     @Length(max = 13, message = "mobile should not have more than 13 digits")

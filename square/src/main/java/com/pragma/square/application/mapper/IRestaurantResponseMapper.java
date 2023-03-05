@@ -1,5 +1,6 @@
 package com.pragma.square.application.mapper;
 
+import com.pragma.square.application.response.RestaurantPageDto;
 import com.pragma.square.application.response.RestaurantResponseDto;
 import com.pragma.square.domain.models.RestaurantModel;
 import org.mapstruct.Mapper;
@@ -12,4 +13,6 @@ import java.util.List;
 public interface IRestaurantResponseMapper {
     RestaurantResponseDto toRestaurantResponseDto(RestaurantModel restaurant);
     List<RestaurantResponseDto> toRestaurantResponseDtoList(List<RestaurantModel> restaurants);
+
+    RestaurantPageDto toRestaurantPageDto(RestaurantModel restaurantModel);
 }

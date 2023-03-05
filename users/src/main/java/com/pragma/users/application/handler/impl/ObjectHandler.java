@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -36,8 +37,18 @@ public class ObjectHandler  implements IObjectHandler {
     }
 
     @Override
-    public UserResponseDto emailExists(String email) {
-        return objectResponseMapper.toUserResponseDto(objectServicePort.emailExists(email));
+    public boolean emailExists(String email) {
+        return objectServicePort.emailExists(email);
+    }
+
+    @Override
+    public UserResponseDto userExists(String email, String password) {
+        return objectResponseMapper.toUserResponseDto(objectServicePort.userExists(email,password));
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+         objectServicePort.deleteUser(id);
     }
 
 }

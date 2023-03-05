@@ -10,6 +10,14 @@ import com.pragma.users.infrastructure.output.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @Configuration
@@ -18,7 +26,7 @@ public class BeanConfiguration {
 
     private final IUserRepository objectRepository;
     private final IObjectEntityMapper objectEntityMapper;
-
+   private final PasswordEncoder passwordEncoder;
     private final UserService service;
 
     @Bean
@@ -27,7 +35,7 @@ public class BeanConfiguration {
     };
     @Bean
     public IObjectServicePort objectServicePort(){
-        return new ObjectUseCase(objectPersistencePort());    }
+        return new ObjectUseCase(objectPersistencePort(),passwordEncoder);    }
 
 
 

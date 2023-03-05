@@ -4,8 +4,8 @@ import com.pragma.users.infrastructure.output.utils.AuthorityName;
 
 public class UserModel {
     private Long id;
-    private String username;
-    private String surname;
+    private String firstname;
+    private String lastname;
 
     private String mobile;
 
@@ -15,19 +15,24 @@ public class UserModel {
     private AuthorityName roles;
     private String dni;
 
+
+
     public UserModel() {
     }
 
-    public UserModel(Long id, String username, String surname, String mobile, String password, String email, AuthorityName roles, String dni) {
+    public UserModel(Long id, String firstname, String lastname, String mobile, String password, String email, AuthorityName roles, String dni) {
         this.id = id;
-        this.username = username;
-        this.surname = surname;
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.mobile = mobile;
         this.password = password;
         this.email = email;
         this.roles = roles;
         this.dni = dni;
+
     }
+
+
 
     public Long getId() {
         return id;
@@ -37,20 +42,20 @@ public class UserModel {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getMobile() {

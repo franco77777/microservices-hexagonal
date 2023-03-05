@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserEmailExists implements ConstraintValidator<IUserEmailExists, String> {
     private final IObjectHandler objectHandler;
-    private final IUserRepository repository;
+
     @Override
         public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
-        return repository.findByEmail(email).isEmpty();
+        return objectHandler.emailExists(email);
     }}

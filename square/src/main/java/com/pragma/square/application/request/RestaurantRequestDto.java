@@ -1,7 +1,7 @@
 package com.pragma.square.application.request;
 
 
-import com.pragma.square.application.validators.name.IValidateRestaurantName;
+import com.pragma.square.application.validators.restaurant_name.IValidateRestaurantName;
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -31,7 +31,7 @@ public class RestaurantRequestDto {
     @NotBlank(message= "url is required")
     @NotNull(message= "url is required")
     private String url;
-    @NotNull(message="userId is required")
+    //@NotNull(message="userId is required")
     private Long userId;
     //
     @NotNull(message = "nit is required")
