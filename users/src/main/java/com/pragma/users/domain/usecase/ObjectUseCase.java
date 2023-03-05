@@ -43,5 +43,10 @@ public class ObjectUseCase  implements IObjectServicePort {
         return user;
     }
 
+    @Override
+    public void deleteUser(Long id) {
+        objectPersistencePort.deleteUser(id);
+    }
+
 
 }

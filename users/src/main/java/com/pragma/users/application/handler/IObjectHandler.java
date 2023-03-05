@@ -11,8 +11,7 @@ public interface IObjectHandler {
     UserResponseDto saveObject(UserRequestDto userRequestDto, AuthorityName role);
     List<UserResponseDto> getAllObjects();
     boolean emailExists(String email);
-
     UserResponseDto userExists(String email, String password);
 
-
+    void deleteUser(Long id);
 }

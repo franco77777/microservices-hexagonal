@@ -6,14 +6,19 @@ import com.pragma.users.application.response.UserResponseDto;
 import com.pragma.users.infrastructure.output.entity.TokenDto;
 import com.pragma.users.infrastructure.output.services.UserService;
 import com.pragma.users.infrastructure.output.utils.AuthorityName;
+import com.pragma.users.infrastructure.output.utils.SquareFeingClient;
+import com.pragma.users.infrastructure.output.utils.SquareService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 
 @RestController
@@ -24,6 +29,8 @@ public class UserRegisterController {
     private final UserService userService;
     private final IObjectHandler objectHandler;
     private final IObjectRequestMapper objectRequestMapper;
+    private final SquareService squareService;
+
 
 
     @GetMapping("/all")
@@ -49,7 +56,7 @@ public class UserRegisterController {
         return new ResponseEntity<>(token, HttpStatus.CREATED);
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
+   // @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/owner")
     public ResponseEntity<UserResponseDto> saveOwner(@RequestBody @Valid UserRequestDto userRequestDto){
         UserResponseDto responseDto = objectHandler.saveObject(userRequestDto, AuthorityName.ROLE_OWNER);
@@ -58,11 +65,20 @@ public class UserRegisterController {
     }
 
    //@PreAuthorize("hasRole('OWNER')")
-    @PostMapping("/employee")
-    public ResponseEntity<TokenDto> saveEmployer(@RequestBody @Valid UserRequestDto userRequestDto){
+
+    @PostMapping("/employee/{restaurantId}")
+    public ResponseEntity<String> saveEmployer(@RequestBody @Valid UserRequestDto userRequestDto, @PathVariable("restaurantId") Long restaurantId){
         UserResponseDto responseDto = objectHandler.saveObject(userRequestDto, AuthorityName.ROLE_EMPLOYEE);
-        TokenDto token = userService.registerToken(objectRequestMapper.toUserEntity(responseDto));
-        return new ResponseEntity<>(token, HttpStatus.CREATED);
+        Long userId = responseDto.getId();
+       try {
+           String OwnerId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+           Boolean squareResponse = squareService.createRestaurantEmployee(Long.parseLong(OwnerId),restaurantId,responseDto.getId());
+           return new ResponseEntity<>("employee: " + responseDto.getEmail() + " created", HttpStatus.CREATED);
+       } catch (Exception e) {
+           objectHandler.deleteUser(userId);
+           return new ResponseEntity<>("bad request: "+e.getMessage(), HttpStatus.BAD_REQUEST);
+       }
     }
+
 
 }

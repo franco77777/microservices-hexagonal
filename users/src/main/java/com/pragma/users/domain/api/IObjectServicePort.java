@@ -14,5 +14,7 @@ public interface IObjectServicePort {
     boolean emailExists(String email);
 
     UserModel userExists(String email, String password);
+
+    void deleteUser(Long id);
 }
 

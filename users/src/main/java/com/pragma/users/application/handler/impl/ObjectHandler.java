@@ -46,4 +46,9 @@ public class ObjectHandler  implements IObjectHandler {
         return objectResponseMapper.toUserResponseDto(objectServicePort.userExists(email,password));
     }
 
+    @Override
+    public void deleteUser(Long id) {
+         objectServicePort.deleteUser(id);
+    }
+
 }

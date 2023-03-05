@@ -48,11 +48,12 @@ public class WebConfiguration {
 //        return new InMemoryUserDetailsManager(admin, user);
 //        //return new UserInfoUserDetailsService();
 //    }
+    private final IUserRepository userRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         PreAuthenticatedUserRoleHeaderFilter authFilter
-                = new PreAuthenticatedUserRoleHeaderFilter();
+                = new PreAuthenticatedUserRoleHeaderFilter(userRepository);
         return http
 //                .csrf().disable()
 //                .authorizeHttpRequests()

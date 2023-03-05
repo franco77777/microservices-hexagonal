@@ -16,14 +16,16 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-private final IUserRepository userRepository;
+    private final IUserRepository userRepository;
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+
     public String generateToken(UserEntity userDetails) {
         return Jwts
                 .builder()
@@ -39,7 +41,8 @@ private final IUserRepository userRepository;
 
 
     public String extractUserEmail(String token) {
-        return extractClaim(token, Claims::getSubject);}
+        return extractClaim(token, Claims::getSubject);
+    }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -55,6 +58,7 @@ private final IUserRepository userRepository;
                 .parseClaimsJws(token)
                 .getBody();
     }
+
     public Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -62,11 +66,21 @@ private final IUserRepository userRepository;
 
 
     public TokenDto validate(String token) {
-        if(isTokenExpired(token)) throw new InfrastructureException("Token Expired", HttpStatus.UNAUTHORIZED);
+        if (isTokenExpired(token)) throw new InfrastructureException("Token Expired", HttpStatus.UNAUTHORIZED);
         String email = extractUserEmail(token);
-        if(!userRepository.findByEmail(email).isPresent())
-        throw new InfrastructureException("Email "+ email + " not found", HttpStatus.NOT_FOUND);
-        return new TokenDto(token);
+        String role = extractUserRole(token);
+        String userId = extractUserId(token);
+        Optional < UserEntity > userDatabase = userRepository.findByEmail(email);
+        if (userDatabase.isEmpty()) {
+            throw new InfrastructureException("Token: email " + email + " not found", HttpStatus.NOT_FOUND);
+        }
+        if (!userDatabase.get().getRoles().toString().equals(role)){
+            throw new InfrastructureException("Token: role is wrong", HttpStatus.NOT_FOUND);
+        }
+        if (!userDatabase.get().getId().toString().equals(userId)){
+            throw new InfrastructureException("Token: userId is wrong", HttpStatus.NOT_FOUND);
+        }
+            return new TokenDto(token);
     }
 
     public boolean isTokenExpired(String token) {
@@ -76,4 +90,11 @@ private final IUserRepository userRepository;
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+    public String extractUserRole(String token) {
+        return extractClaim(token, Claims::getIssuer);
+    }
+    public String extractUserId(String token) {
+        return extractClaim(token, Claims::getId);
+    }
 }
+

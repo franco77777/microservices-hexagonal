@@ -13,4 +13,6 @@ public interface    IObjectPersistencePort {
     boolean emailExists(String email);
 
     UserModel userExists(String email);
+
+    void deleteUser(Long id);
 }

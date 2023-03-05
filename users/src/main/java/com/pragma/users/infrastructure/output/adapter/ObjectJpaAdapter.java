@@ -54,5 +54,10 @@ public class ObjectJpaAdapter  implements IObjectPersistencePort {
         return objectEntityMapper.toUserModel(userEntity);
     }
 
+    @Override
+    public void deleteUser(Long id) {
+        objectRepository.deleteById(id);
+    }
+
 
 }

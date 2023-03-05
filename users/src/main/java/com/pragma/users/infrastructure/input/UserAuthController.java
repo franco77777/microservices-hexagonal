@@ -3,8 +3,6 @@ package com.pragma.users.infrastructure.input;
 import com.pragma.users.application.handler.IObjectHandler;
 import com.pragma.users.application.request.AuthenticateRequestDto;
 import com.pragma.users.application.response.UserResponseDto;
-import com.pragma.users.domain.model.AuthenticationModel;
-import com.pragma.users.infrastructure.exception.InfrastructureException;
 import com.pragma.users.infrastructure.output.entity.TokenDto;
 import com.pragma.users.infrastructure.output.entity.UserEntity;
 import com.pragma.users.infrastructure.output.mapper.IObjectEntityMapper;
@@ -12,13 +10,11 @@ import com.pragma.users.infrastructure.output.repository.IUserRepository;
 import com.pragma.users.infrastructure.output.services.UserService;
 import com.pragma.users.infrastructure.security.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user/auth")
