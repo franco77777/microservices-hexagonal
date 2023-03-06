@@ -7,6 +7,7 @@ import com.pragma.square.infrastructure.output.adapter.OrderJpaAdapter;
 import com.pragma.square.infrastructure.output.mapper.IOrderEntityMapper;
 import com.pragma.square.infrastructure.output.mapper.IPlateEntityMapper;
 import com.pragma.square.infrastructure.output.mapper.IRestaurantEntityMapper;
+import com.pragma.square.infrastructure.output.repository.IEmployeeRepository;
 import com.pragma.square.infrastructure.output.repository.IOrderRepository;
 import com.pragma.square.infrastructure.output.repository.IPlateRepository;
 import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
@@ -24,9 +25,10 @@ public class OrderBean {
     private final IRestaurantEntityMapper restaurantEntityMapper;
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
+    private final IEmployeeRepository employeeRepository;
     @Bean
     public IOrderPersistencePort orderPersistencePort() {
-        return new OrderJpaAdapter(plateRepository,plateEntityMapper,restaurantRepository,restaurantEntityMapper,orderRepository,orderEntityMapper);
+        return new OrderJpaAdapter(plateRepository,plateEntityMapper,restaurantRepository,restaurantEntityMapper,orderRepository,orderEntityMapper,employeeRepository);
     }
     @Bean
     public IOrderServicePort orderServicePort() {

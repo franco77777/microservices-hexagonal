@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@FeignClient(name = "square-service")
+@FeignClient(name = "square-service", url = "http://localhost:8081")
 public interface SquareFeingClient {
 
     @PostMapping("/square/employee/{OwnerId}/{restaurantId}/{employeeId}")

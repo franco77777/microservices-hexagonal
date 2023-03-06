@@ -9,6 +9,7 @@ import com.pragma.square.domain.api.IOrderServicePort;
 import com.pragma.square.domain.models.ClientRequestModel;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,5 +26,15 @@ public class OrderHandler implements IOrderHandler {
         List<ClientRequestModel> requests = clientRequestMapper.toModel(clientRequestList);
         return orderResponseMapper.toResponseDto(orderServicePort.create(requests));
 
+    }
+
+    @Override
+    public Page<OrderResponseDto> findBySatus(int page, int size, String sort, String status,String property) {
+        return orderServicePort.findBySatus(page, size, sort, status,property).map(orderResponseMapper::toResponseDto);
+    }
+
+    @Override
+    public OrderResponseDto updateToPreparing(Long plateId) {
+        return orderResponseMapper.toResponseDto(orderServicePort.updateToPreparing(plateId));
     }
 }
