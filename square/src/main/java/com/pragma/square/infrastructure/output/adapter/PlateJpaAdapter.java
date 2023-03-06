@@ -61,7 +61,7 @@ private final ICategoryRepository categoryRepository;
         if(sort.equals("ascending")) {
             result = plateRepository.findAllByIdCategory_IdAndIdRestaurant_Id( categoryId,restaurantId, PageRequest.of(page, size).withSort(Sort.by(Sort.Direction.ASC,property))).orElseThrow(()-> new InfrastructureException("Plates not found", HttpStatus.NOT_FOUND));
         } else {
-            result = result = plateRepository.findAllByIdCategory_IdAndIdRestaurant_Id( categoryId,restaurantId, PageRequest.of(page, size).withSort(Sort.by(Sort.Direction.DESC,property))).orElseThrow(()-> new InfrastructureException("Plates not found", HttpStatus.NOT_FOUND));
+            result = plateRepository.findAllByIdCategory_IdAndIdRestaurant_Id( categoryId,restaurantId, PageRequest.of(page, size).withSort(Sort.by(Sort.Direction.DESC,property))).orElseThrow(()-> new InfrastructureException("Plates not found", HttpStatus.NOT_FOUND));
         }
         return result.map(plateEntityMapper::toPlateModel);
     }

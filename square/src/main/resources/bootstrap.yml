@@ -1,10 +1,10 @@
-#server:
-#   port: 8081
+server:
+   port: 8081
 spring:
-   cloud:
-      config:
-         enabled: true
-         uri: http://localhost:8083
+#   cloud:
+#      config:
+#         enabled: true
+#         uri: http://localhost:8083
    application:
       name: square-service
    datasource:
