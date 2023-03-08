@@ -1,7 +1,7 @@
 package com.pragma.square.application.request;
 
 
-import com.pragma.square.application.validators.restaurant_name.IValidateRestaurantName;
+import com.pragma.square.application.validators.IValidateRestaurantName;
 
 
 import jakarta.validation.constraints.NotBlank;

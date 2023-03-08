@@ -3,6 +3,7 @@ package com.pragma.square.infrastructure.output.mapper;
 import com.pragma.square.domain.models.RestaurantModel;
 import com.pragma.square.infrastructure.output.entity.RestaurantEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public interface IRestaurantEntityMapper {
     RestaurantEntity toRestaurantEntity(RestaurantModel restaurant);
+   // @Mapping(target = "plateList", ignore = true)
     RestaurantModel toRestaurantModel(RestaurantEntity restaurantEntity);
     List<RestaurantModel> toRestaurantModelList(List<RestaurantEntity> restaurantEntityList);
 

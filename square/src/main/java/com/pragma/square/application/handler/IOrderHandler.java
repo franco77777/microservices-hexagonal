@@ -12,4 +12,6 @@ public interface IOrderHandler {
     Page<OrderResponseDto> findBySatus( int page,  int size,  String sort,  String status,String property );
 
     OrderResponseDto updateToPreparing(Long plateId);
+
+    OrderResponseDto ready(Long plateId);
 }

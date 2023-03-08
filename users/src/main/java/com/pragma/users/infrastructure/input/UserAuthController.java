@@ -44,13 +44,6 @@ public class UserAuthController {
         return ResponseEntity.ok(tokenDto);
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<UserEntity> getUser(){
-        UserEntity user = userRepository.findByEmail("franco@gmail.com124").orElseThrow();
-        System.out.println("sout res");
-        System.out.println(user);
-        return ResponseEntity.ok(user);
-    }
 
 
 }

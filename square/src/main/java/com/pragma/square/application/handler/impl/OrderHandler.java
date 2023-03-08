@@ -37,4 +37,9 @@ public class OrderHandler implements IOrderHandler {
     public OrderResponseDto updateToPreparing(Long plateId) {
         return orderResponseMapper.toResponseDto(orderServicePort.updateToPreparing(plateId));
     }
+
+    @Override
+    public OrderResponseDto ready(Long orderId) {
+        return orderResponseMapper.toResponseDto(orderServicePort.updateToReady(orderId));
+    }
 }

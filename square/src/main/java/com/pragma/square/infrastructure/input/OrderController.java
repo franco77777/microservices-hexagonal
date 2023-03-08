@@ -9,6 +9,7 @@ import com.pragma.square.infrastructure.output.entity.OrderEntity;
 
 import com.pragma.square.infrastructure.output.repository.IOrderRepository;
 import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
+import com.pragma.square.infrastructure.utils.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ public class OrderController {
     private final IRestaurantRepository restaurantRepository;
     private final IOrderRepository orderRepository;
     private final IOrderHandler orderHandler;
+    private final UserService userService;
     @PostMapping
     public ResponseEntity<OrderResponseDto>create(@RequestBody List<ClientRequest> clientRequestList){
         OrderResponseDto response = orderHandler.create(clientRequestList);
@@ -52,6 +54,18 @@ public class OrderController {
     public ResponseEntity< List<OrderEntity>> getOrders() {
         List<OrderEntity> order = orderRepository.findAll();
         return ResponseEntity.ok(order);
+    }
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    @PutMapping("/ready/{orderId}")
+    public ResponseEntity<OrderResponseDto> ready(@PathVariable Long orderId){
+        OrderResponseDto orderResponseDto = orderHandler.ready(orderId);
+        return new ResponseEntity<>(orderResponseDto, HttpStatus.OK);
+    }
+    @GetMapping("/test")
+    public ResponseEntity<String> test (){
+        Long id = 12L;
+        userService.sendMessage("5493875379211",id);
+        return ResponseEntity.ok("ok");
     }
 
 }

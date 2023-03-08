@@ -11,6 +11,7 @@ import com.pragma.square.infrastructure.output.repository.IEmployeeRepository;
 import com.pragma.square.infrastructure.output.repository.IOrderRepository;
 import com.pragma.square.infrastructure.output.repository.IPlateRepository;
 import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
+import com.pragma.square.infrastructure.utils.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,9 +27,10 @@ public class OrderBean {
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
     private final IEmployeeRepository employeeRepository;
+    private final UserService userService;
     @Bean
     public IOrderPersistencePort orderPersistencePort() {
-        return new OrderJpaAdapter(plateRepository,plateEntityMapper,restaurantRepository,restaurantEntityMapper,orderRepository,orderEntityMapper,employeeRepository);
+        return new OrderJpaAdapter(plateRepository,plateEntityMapper,restaurantRepository,restaurantEntityMapper,orderRepository,orderEntityMapper,employeeRepository,userService);
     }
     @Bean
     public IOrderServicePort orderServicePort() {

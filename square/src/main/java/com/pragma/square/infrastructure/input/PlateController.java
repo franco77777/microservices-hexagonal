@@ -34,9 +34,6 @@ public class PlateController {
         List<PlateEntity> result = plateRepository.findAll();
         return result;
     }
-
-
-
     @GetMapping("/pagination/{categoryId}/{restaurantId}")
     public ResponseEntity<PagesDto<Page<PlateResponseDto>>> test(@PathVariable("categoryId") Long categoryId, @PathVariable("restaurantId") Long restaurantId, @RequestParam int page, @RequestParam int size, @RequestParam String sort, @RequestParam String property) {
         //Page<PlateEntity> result = plateRepository.findAllByIdCategory_IdAndIdRestaurant_Id( categoryId,restaurantId, PageRequest.of(page, size).withSort(Sort.by(Sort.Direction.ASC,property))).orElseThrow();

@@ -13,4 +13,6 @@ public interface IOrderServicePort {
     Page<OrderModel> findBySatus(int page, int size, String sort, String status,String property);
 
     OrderModel updateToPreparing(Long plateId);
+
+    OrderModel updateToReady(Long plateId);
 }

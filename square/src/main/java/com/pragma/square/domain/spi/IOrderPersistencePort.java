@@ -1,13 +1,9 @@
 package com.pragma.square.domain.spi;
 
-import com.pragma.square.domain.models.ClientRequestModel;
 import com.pragma.square.domain.models.OrderModel;
 import com.pragma.square.domain.models.PlateModel;
 import com.pragma.square.domain.models.RestaurantModel;
-import jakarta.persistence.criteria.Order;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 public interface IOrderPersistencePort {
     OrderModel create(OrderModel order);
@@ -24,5 +20,9 @@ public interface IOrderPersistencePort {
 
     OrderModel findOrderById(Long plateId);
 
-    OrderModel updateToPreparing(OrderModel order);
+    OrderModel updateOrder(OrderModel order);
+
+    String findClientPhone(Long orderClientId);
+
+    void sendMessage(String phoneTransform, Long id);
 }

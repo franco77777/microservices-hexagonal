@@ -7,7 +7,6 @@ import com.pragma.square.domain.models.OrderModel;
 import com.pragma.square.domain.models.PlateModel;
 import com.pragma.square.domain.models.RestaurantModel;
 import com.pragma.square.domain.spi.IOrderPersistencePort;
-import com.pragma.square.infrastructure.exception.InfrastructureException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +19,7 @@ public class OrderUseCase implements IOrderServicePort {
     public OrderUseCase(IOrderPersistencePort orderPersistencePort) {
         this.orderPersistencePort = orderPersistencePort;
     }
+    Long clientOrderId;
 
     @Override
     public OrderModel create(List<ClientRequestModel> requests) {
@@ -54,19 +54,37 @@ public class OrderUseCase implements IOrderServicePort {
         if(!sort.matches("ascending|descending")) throw new DomainException("Invalid sort, must be: ascending|descending", HttpStatus.BAD_REQUEST);
         String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
         Long restaurantId = orderPersistencePort.findEmployee(Long.parseLong(currentUserId));
-        Page<OrderModel> orderList = orderPersistencePort.findByStatus(restaurantId, page, size, sort, status,property);
-        return orderList;
+        return orderPersistencePort.findByStatus(restaurantId, page, size, sort, status,property);
     }
 
     @Override
-    public OrderModel updateToPreparing(Long plateId) {
-        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
-        Long restaurantId = orderPersistencePort.findEmployee(Long.parseLong(currentUserId));
-        OrderModel order = orderPersistencePort.findOrderById(plateId);
-        if(!Objects.equals(restaurantId, order.getIdRestaurant().getId())) {
-            throw new InfrastructureException("You don't have access to this order", HttpStatus.UNAUTHORIZED);
-        }
-        order.setStatus("preparing");
-        return orderPersistencePort.updateToPreparing(order);
+    public OrderModel updateToPreparing(Long orderId) {
+     return orderPersistencePort.updateOrder(currentEmployeeValidate(orderId,"preparing"));
     }
+
+    @Override
+    public OrderModel updateToReady(Long orderId) {
+        return orderPersistencePort.updateOrder(currentEmployeeValidate(orderId,"ready"));
+    }
+
+    public OrderModel currentEmployeeValidate(Long orderId,String status) {
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        Long restaurantIdOfEmployee = orderPersistencePort.findEmployee(Long.parseLong(currentUserId));
+        OrderModel order = orderPersistencePort.findOrderById(orderId);
+        Long restaurantIdOfOrder = order.getIdRestaurant().getId();
+        if(!Objects.equals(restaurantIdOfEmployee, restaurantIdOfOrder)) {
+            throw new DomainException("You don't have access to this order", HttpStatus.UNAUTHORIZED);
+        }
+        if(status.equals("ready")) {
+            String clientPhone = orderPersistencePort.findClientPhone(order.getIdClient());
+            String phoneTransform = clientPhone.substring(1);
+            orderPersistencePort.sendMessage(phoneTransform,order.getId());
+        }
+        order.setStatus(status);
+        return order;
+    }
+
+
+
+
 }

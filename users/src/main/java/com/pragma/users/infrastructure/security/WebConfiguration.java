@@ -55,22 +55,6 @@ public class WebConfiguration {
         PreAuthenticatedUserRoleHeaderFilter authFilter
                 = new PreAuthenticatedUserRoleHeaderFilter(userRepository);
         return http
-//                .csrf().disable()
-//                .authorizeHttpRequests()
-//                .requestMatchers("/user/register/test").permitAll()
-//                .requestMatchers("/user/register/authenticate").permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .addFilterBefore(authFilter, BasicAuthenticationFilter.class)
-//                .authorizeHttpRequests()
-//                .anyRequest().authenticated()
-//                .and()
-//                .httpBasic(Customizer.withDefaults())
-//                .build();
-//
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -79,7 +63,7 @@ public class WebConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/user/register/**").permitAll()
                 .requestMatchers("/user/auth/authenticate").permitAll()
-                .requestMatchers("/user/auth/validate").permitAll()
+                .requestMatchers("/user/square/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic(Customizer.withDefaults())
@@ -87,14 +71,7 @@ public class WebConfiguration {
 
     }
 
-
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-//        return config.getAuthenticationManager();
-//    }
-@Bean
-public PasswordEncoder passwordEncoder() {
+    @Bean public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
 }
 

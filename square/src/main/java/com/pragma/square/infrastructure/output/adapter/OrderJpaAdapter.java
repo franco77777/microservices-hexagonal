@@ -17,6 +17,7 @@ import com.pragma.square.infrastructure.output.repository.IEmployeeRepository;
 import com.pragma.square.infrastructure.output.repository.IOrderRepository;
 import com.pragma.square.infrastructure.output.repository.IPlateRepository;
 import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
+import com.pragma.square.infrastructure.utils.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
     private final IEmployeeRepository employeeRepository;
+    private final UserService userService;
 
     @Override
     public OrderModel create(OrderModel order) {
@@ -61,7 +63,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
 
     @Override
     public Long findEmployee(Long parseLong) {
-        EmployeeEntity employeeEntity = employeeRepository.findByEmployeeId(parseLong).orElseThrow(()->new InfrastructureException("you are not an employee of this restaurant",HttpStatus.UNAUTHORIZED));
+        EmployeeEntity employeeEntity = employeeRepository.findByEmployeeId(parseLong).orElseThrow(()->new InfrastructureException("you are not an employee",HttpStatus.UNAUTHORIZED));
         return employeeEntity.getRestaurantId();
     }
 
@@ -79,14 +81,24 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     }
 
     @Override
-    public OrderModel findOrderById(Long plateId) {
-        OrderEntity orderEntity = orderRepository.findById(plateId).orElseThrow(()->new InfrastructureException("plate id: "+ plateId + " not found", HttpStatus.BAD_REQUEST));
+    public OrderModel findOrderById(Long orderId) {
+        OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(()->new InfrastructureException("plate id: "+ orderId + " not found", HttpStatus.BAD_REQUEST));
         return orderEntityMapper.toModel(orderEntity);
     }
 
     @Override
-    public OrderModel updateToPreparing(OrderModel order) {
+    public OrderModel updateOrder(OrderModel order) {
         OrderEntity resultUpdate = orderRepository.save(orderEntityMapper.toEntity(order));
         return orderEntityMapper.toModel(resultUpdate);
+    }
+
+    @Override
+    public String findClientPhone(Long orderClientId) {
+        return userService.getClientPhone(orderClientId);
+    }
+
+    @Override
+    public void sendMessage(String phoneTransform, Long id) {
+        userService.sendMessage(phoneTransform,id);
     }
 }

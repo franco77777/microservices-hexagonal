@@ -102,5 +102,8 @@ ids.add(2L);
         System.out.println("soy ids");
         System.out.println(ids);
         System.out.println(ids.size());
+        String number = "+123";
+        System.out.println(number.charAt(0));
+        System.out.println(number.substring(1));
 
     }}

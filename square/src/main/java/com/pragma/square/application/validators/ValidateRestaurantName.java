@@ -1,4 +1,4 @@
-package com.pragma.square.application.validators.restaurant_name;
+package com.pragma.square.application.validators;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

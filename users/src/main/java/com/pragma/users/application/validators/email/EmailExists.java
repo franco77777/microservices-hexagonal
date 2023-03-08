@@ -1,13 +1,12 @@
-package com.pragma.users.application.validators;
+package com.pragma.users.application.validators.email;
 
 import com.pragma.users.application.handler.IObjectHandler;
-import com.pragma.users.infrastructure.output.repository.IUserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class UserEmailExists implements ConstraintValidator<IUserEmailExists, String> {
+public class EmailExists implements ConstraintValidator<IEmailExists, String> {
     private final IObjectHandler objectHandler;
 
     @Override
