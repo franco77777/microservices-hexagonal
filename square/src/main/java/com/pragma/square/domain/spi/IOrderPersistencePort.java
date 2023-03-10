@@ -12,9 +12,9 @@ public interface IOrderPersistencePort {
 
     RestaurantModel findRestaurantById(Long id);
 
-    Boolean orderExists(Long idClient);
+    Boolean orderExists();
 
-    Long findEmployee(Long parseLong);
+    Long findEmployee();
 
     Page<OrderModel> findByStatus(Long restaurantId, int page, int size, String sort, String status,String property);
 
@@ -24,5 +24,6 @@ public interface IOrderPersistencePort {
 
     String findClientPhone(Long orderClientId);
 
-    void sendMessage(String phoneTransform, Long id);
+
+    void deleteOrder(Long orderId);
 }

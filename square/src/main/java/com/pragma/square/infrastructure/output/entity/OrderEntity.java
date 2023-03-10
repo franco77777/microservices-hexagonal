@@ -20,8 +20,11 @@ public class OrderEntity {
     private Date orderDate;
     private String status;
     private Long idChef;
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name="plates_id")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "order_plates",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "plate_id")
+    )
     private List<PlateEntity> plates;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

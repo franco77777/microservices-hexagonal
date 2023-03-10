@@ -11,13 +11,13 @@ public class PlateModel {
     private String imageUrl;
     private CategoryModel idCategory;
     private Boolean active;
-    private RestaurantEntity idRestaurant;
+    private RestaurantModel idRestaurant;
     private Integer quantity;
 
     public PlateModel() {
     }
 
-    public PlateModel(Long id, String name, String price, String description, String imageUrl, CategoryModel idCategory, Boolean active, RestaurantEntity idRestaurant, Integer quantity) {
+    public PlateModel(Long id, String name, String price, String description, String imageUrl, CategoryModel idCategory, Boolean active, RestaurantModel idRestaurant, Integer quantity) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -93,11 +93,11 @@ public class PlateModel {
         this.active = active;
     }
 
-    public RestaurantEntity getIdRestaurant() {
+    public RestaurantModel getIdRestaurant() {
         return idRestaurant;
     }
 
-    public void setIdRestaurant(RestaurantEntity idRestaurant) {
+    public void setIdRestaurant(RestaurantModel idRestaurant) {
         this.idRestaurant = idRestaurant;
     }
 }

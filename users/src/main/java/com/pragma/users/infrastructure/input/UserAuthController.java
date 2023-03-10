@@ -1,13 +1,12 @@
 package com.pragma.users.infrastructure.input;
 
-import com.pragma.users.application.handler.IObjectHandler;
+import com.pragma.users.application.handler.IUserHandler;
 import com.pragma.users.application.request.AuthenticateRequestDto;
 import com.pragma.users.application.response.UserResponseDto;
 import com.pragma.users.infrastructure.output.entity.TokenDto;
 import com.pragma.users.infrastructure.output.entity.UserEntity;
-import com.pragma.users.infrastructure.output.mapper.IObjectEntityMapper;
+import com.pragma.users.infrastructure.output.mapper.IUserEntityMapper;
 import com.pragma.users.infrastructure.output.repository.IUserRepository;
-import com.pragma.users.infrastructure.output.services.UserService;
 import com.pragma.users.infrastructure.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,21 +20,21 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UserAuthController {
-    private final IObjectHandler objectHandler;
+    private final IUserHandler userHandler;
     private final JwtService jwtService;
-    private final UserService userService;
+
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final IObjectEntityMapper objectEntityMapper;
+    private final IUserEntityMapper userEntityMapper;
 
 
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authenticate(
             @RequestBody @Validated AuthenticateRequestDto request
     ) {
-        UserResponseDto user = objectHandler.userExists(request.getEmail(), request.getPassword());
-        UserEntity result  = objectEntityMapper.responseToEntity(user);
-        return ResponseEntity.ok(userService.authenticate(result));
+        UserResponseDto user = userHandler.userExists(request.getEmail(), request.getPassword());
+        UserEntity result  = userEntityMapper.responseToEntity(user);
+        return ResponseEntity.ok(jwtService.authenticate(result));
     }
 
     @PostMapping("/validate")

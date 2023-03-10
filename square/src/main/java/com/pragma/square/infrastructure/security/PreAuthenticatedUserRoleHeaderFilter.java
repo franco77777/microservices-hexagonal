@@ -41,6 +41,8 @@ public class PreAuthenticatedUserRoleHeaderFilter
         userEmail = extractUsername(jwt);
         Roles = extractUserRole(jwt);
         UserId = extractUserId(jwt);
+        System.out.println("soy el user id de token");
+        System.out.println(UserId);
         List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Roles);
         PreAuthenticatedAuthenticationToken authentication
                 = new PreAuthenticatedAuthenticationToken(
@@ -48,6 +50,7 @@ public class PreAuthenticatedUserRoleHeaderFilter
         SecurityContextHolder.getContext().setAuthentication(authentication);
         System.out.println("soy el pre context");
         System.out.println(SecurityContextHolder.getContext());
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getCredentials().toString());
         chain.doFilter(servletRequest, servletResponse);
     }
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";

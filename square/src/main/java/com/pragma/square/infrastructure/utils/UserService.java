@@ -3,10 +3,13 @@ package com.pragma.square.infrastructure.utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +19,6 @@ public class UserService  {
     public String getClientPhone(Long userId) {
         return userFeingClient.getUserPhone(userId);
     }
-    public void sendMessage(String number,Long orderId){
 
-    }
+
 }

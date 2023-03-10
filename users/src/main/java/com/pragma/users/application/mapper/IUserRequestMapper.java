@@ -10,7 +10,7 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE, // ignora errores si no mapea algo
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 
-public interface IObjectRequestMapper {
+public interface IUserRequestMapper {
     UserModel toUserModel(UserRequestDto userRequestDto);
     UserEntity toUserEntity(UserResponseDto userRequestDto);
 }

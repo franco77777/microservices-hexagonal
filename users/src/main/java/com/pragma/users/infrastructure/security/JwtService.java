@@ -26,6 +26,13 @@ public class JwtService {
     private final IUserRepository userRepository;
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
 
+
+    public TokenDto registerToken(UserEntity userEntity){
+        var jwtToken = generateToken(userEntity);
+        return TokenDto.builder()
+                .token(jwtToken)
+                .build();
+    }
     public String generateToken(UserEntity userDetails) {
         return Jwts
                 .builder()
@@ -37,31 +44,6 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24)))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-
-    public String extractUserEmail(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-
-        return claimsResolver.apply(claims);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 
 
@@ -83,6 +65,31 @@ public class JwtService {
             return new TokenDto(token);
     }
 
+    public TokenDto authenticate(UserEntity request) {
+        var jwtToken = generateToken(request);
+        return TokenDto.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+    public String extractUserEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+
+        return claimsResolver.apply(claims);
+    }
+
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -96,5 +103,11 @@ public class JwtService {
     public String extractUserId(String token) {
         return extractClaim(token, Claims::getId);
     }
+    public Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+
 }
 

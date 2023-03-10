@@ -5,11 +5,10 @@ import com.pragma.users.application.response.UserResponseDto;
 import com.pragma.users.infrastructure.output.utils.AuthorityName;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface IObjectHandler {
-    UserResponseDto saveObject(UserRequestDto userRequestDto, AuthorityName role);
-    List<UserResponseDto> getAllObjects();
+public interface IUserHandler {
+    UserResponseDto saveUser(UserRequestDto userRequestDto, AuthorityName role);
+    List<UserResponseDto> getAllUsers();
     boolean emailExists(String email);
     UserResponseDto userExists(String email, String password);
 

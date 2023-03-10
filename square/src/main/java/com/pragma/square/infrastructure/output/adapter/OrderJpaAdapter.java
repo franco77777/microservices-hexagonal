@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 @RequiredArgsConstructor
@@ -57,13 +58,18 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     }
 
     @Override
-    public Boolean orderExists(Long idClient) {
-        return orderRepository.existsByIdClient(idClient);
+    public Boolean orderExists() {
+        String idClient = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        return orderRepository.existsByIdClient(Long.parseLong(idClient));
     }
 
     @Override
-    public Long findEmployee(Long parseLong) {
-        EmployeeEntity employeeEntity = employeeRepository.findByEmployeeId(parseLong).orElseThrow(()->new InfrastructureException("you are not an employee",HttpStatus.UNAUTHORIZED));
+    public Long findEmployee() {
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        Long employeeId = Long.parseLong(currentUserId);
+        System.out.println("soy id user");
+        System.out.println(employeeId);
+        EmployeeEntity employeeEntity = employeeRepository.findByEmployeeId(employeeId).orElseThrow(()->new InfrastructureException("you are not an employee",HttpStatus.UNAUTHORIZED));
         return employeeEntity.getRestaurantId();
     }
 
@@ -82,7 +88,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
 
     @Override
     public OrderModel findOrderById(Long orderId) {
-        OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(()->new InfrastructureException("plate id: "+ orderId + " not found", HttpStatus.BAD_REQUEST));
+        OrderEntity orderEntity = orderRepository.findById(orderId).orElseThrow(()->new InfrastructureException("order id: "+ orderId + " not found", HttpStatus.BAD_REQUEST));
         return orderEntityMapper.toModel(orderEntity);
     }
 
@@ -98,7 +104,9 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     }
 
     @Override
-    public void sendMessage(String phoneTransform, Long id) {
-        userService.sendMessage(phoneTransform,id);
+    public void deleteOrder(Long orderId) {
+        orderRepository.deleteById(orderId);
     }
+
+
 }
