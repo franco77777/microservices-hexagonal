@@ -1,12 +1,14 @@
 package com.pragma.square.domain.usecase;
 
 import com.pragma.square.domain.exception.DomainException;
+import com.pragma.square.domain.factory.OrderUseCaseFactory;
 import com.pragma.square.domain.models.ClientRequestModel;
 import com.pragma.square.domain.models.OrderModel;
 import com.pragma.square.domain.models.PlateModel;
 import com.pragma.square.domain.models.RestaurantModel;
 import com.pragma.square.domain.spi.IOrderPersistencePort;
 import org.aspectj.lang.annotation.Before;
+import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,9 +32,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.bouncycastle.math.ec.rfc8032.Ed25519.verify;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderUseCaseTest {
@@ -42,18 +47,16 @@ class OrderUseCaseTest {
     @InjectMocks
     OrderUseCase orderUseCase;
 
-    @BeforeEach
-    void setUp() {
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(auth.getCredentials()).thenReturn("1");
-    }
 
+////////////////////////////////<--- CREATE --->///////////////////////////////////////////
     @Test
     void shouldCreateOrder() {
         //given
+        Authentication auth = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
+        when(auth.getCredentials()).thenReturn("1");
         List<ClientRequestModel> clientRequestModelList = new ArrayList<>();
         ClientRequestModel clientRequestModel = new ClientRequestModel();
         clientRequestModel.setPlateId(1L);
@@ -74,13 +77,13 @@ class OrderUseCaseTest {
         plateModelList.add(plateModel);
 
 
-        Mockito.when(orderPersistencePort.orderExists())
+        when(orderPersistencePort.orderExists())
                 .thenReturn(false);
-        Mockito.when(orderPersistencePort.findPlateById(anyLong()))
+        when(orderPersistencePort.findPlateById(anyLong()))
                 .thenReturn(plateModel);
-        Mockito.when(orderPersistencePort.findRestaurantById(anyLong()))
+        when(orderPersistencePort.findRestaurantById(anyLong()))
                 .thenReturn(restaurantModel);
-        Mockito.when(orderPersistencePort.create(Mockito.any()))
+        when(orderPersistencePort.create(any()))
                 .thenReturn(orderModel);
         OrderModel result = orderUseCase.create(clientRequestModelList);
 
@@ -91,8 +94,13 @@ class OrderUseCaseTest {
     @Test
     void createShouldThrowExceptionIfOrderAlreadyExistsIsFalse(){
         //given
+        Authentication auth = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
+        when(auth.getCredentials()).thenReturn("1");
         //when
-        Mockito.when(orderPersistencePort.orderExists())
+        when(orderPersistencePort.orderExists())
                 .thenReturn(true);
         //then
         Assertions.assertThrows(DomainException.class, () -> {
@@ -103,6 +111,11 @@ class OrderUseCaseTest {
     @Test
     void createShouldThrowExceptionIfPlateIdNotExist(){
         //given
+        Authentication auth = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
+        when(auth.getCredentials()).thenReturn("1");
         List<ClientRequestModel> clientRequestModelList = new ArrayList<>();
         ClientRequestModel clientRequestModel = new ClientRequestModel();
         clientRequestModel.setPlateId(null);
@@ -110,7 +123,7 @@ class OrderUseCaseTest {
         clientRequestModelList.add(clientRequestModel);
 
         //when
-        Mockito.when(orderPersistencePort.orderExists())
+        when(orderPersistencePort.orderExists())
                 .thenReturn(false);
         //then
         Assertions.assertThrows(DomainException.class, () -> {
@@ -120,6 +133,9 @@ class OrderUseCaseTest {
 @Test
     void createShouldThrowExceptionIfQuantityNotExist(){
         //given
+        Authentication auth = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
         List<ClientRequestModel> clientRequestModelList = new ArrayList<>();
         ClientRequestModel clientRequestModel = new ClientRequestModel();
         clientRequestModel.setPlateId(1L);
@@ -127,16 +143,17 @@ class OrderUseCaseTest {
         clientRequestModelList.add(clientRequestModel);
 
         //when
-        Mockito.when(orderPersistencePort.orderExists())
+        when(orderPersistencePort.orderExists())
                 .thenReturn(false);
-
+        when(auth.getCredentials()).thenReturn("1");
+        when(securityContext.getAuthentication()).thenReturn(auth);
         //then
         Assertions.assertThrows(DomainException.class, () -> {
             orderUseCase.create(clientRequestModelList);
         });
     }
 
-
+    ////////////////////////////////<--- FIND BY STATUS --->///////////////////////////////////////////
     @Test
     void findByStatusShouldReturnPageOrderModel(){
         //given
@@ -148,13 +165,13 @@ class OrderUseCaseTest {
         String status= "pending";
         String property = "id";
         Long restaurantId = 1L;
-        Page<OrderModel> expected =  new PageImpl<>(List.of(orderModel, orderModel2), pageable, 0);
+        Page<OrderModel> expected =  new PageImpl<>(new ArrayList<>());
 
         //when
-        Mockito.when(orderPersistencePort.findEmployee())
+        when(orderPersistencePort.findEmployee())
                 .thenReturn(restaurantId);
-        Mockito.when(orderPersistencePort.findByStatus(restaurantId,page, size, sort, status, property))
-                .thenReturn(Mock);
+        when(orderPersistencePort.findByStatus(restaurantId,page, size, sort, status, property))
+                .thenReturn(expected);
         Page<OrderModel> result = orderUseCase.findByStatus(page, size, sort, status, property);
 
         //then
@@ -164,26 +181,236 @@ class OrderUseCaseTest {
     }
 
     @Test
-    void updateStatus() {
+    void findByStatusShouldThrowExceptionWhenStatusIsWrong(){
+        //given
+        int page = 1;
+        int size = 2;
+        String sort = "ascending";
+        String status= "pendin";
+        String property = "id";
+
+        //when
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.findByStatus(page, size, sort, status, property));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("Invalid status, must be: pending|preparing|ready");
     }
 
     @Test
-    void updateToDelivered() {
+    void findByStatusShouldThrowExceptionWhenPropertyIsWrong(){
+        //given
+        int page = 1;
+        int size = 2;
+        String sort = "ascending";
+        String status= "pending";
+        String property = "idSort";
+
+        //when
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.findByStatus(page, size, sort, status, property));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("Invalid property, must be: id|orderDate|idClient|idChef");
+
     }
 
+    @Test()
+    void findByStatusShouldThrowExceptionWhenSortIsWrong() throws Exception{
+        //given
+        int page = 1;
+        int size = 2;
+        String sort = "asc";
+        String status= "pending";
+        String property = "id";
+
+        //when
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.findByStatus(page, size, sort, status, property));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("Invalid sort, must be: ascending|descending");
+
+
+    }
+
+    ////////////////////////////////<--- UPDATE STATUS --->///////////////////////////////////////////
+    @Test
+    void updateStatusShouldChangeStatus() {
+        //given
+        Long orderId = 1L;
+        String status = "preparing";
+        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+
+        //when
+        when(orderPersistencePort.findEmployee())
+                .thenReturn(1L);
+        when(orderPersistencePort.findOrderById(orderId))
+                .thenReturn(expected);
+        when(orderPersistencePort.updateOrder(any()))
+                .thenReturn(expected);
+        OrderModel result = orderUseCase.updateStatus(orderId, status);
+
+        //then
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void updateStatusShouldThrowExceptionWhenStatusIsWrong(){
+        //given
+        String status = "preparin";
+        Long orderId = 1L;
+
+        //then
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.updateStatus(orderId,status));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("Invalid status, must be : preparing|ready");
+    }
+
+    @Test
+    void updateStatusShouldThrowExceptionWhenIsNotAnEmployee(){
+        //given
+        Long orderId = 1L;
+        String status = "preparing";
+        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+
+        //when
+        when(orderPersistencePort.findEmployee())
+                .thenReturn(2L);
+        when(orderPersistencePort.findOrderById(orderId))
+                .thenReturn(expected);
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.updateStatus(orderId,status));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("You don't have access to this order");
+    }
+@Test
+    void updateStatusShouldThrowExceptionWhenStatusPreparingDosNotAgree(){
+        //given
+        Long orderId = 1L;
+        String status = "preparing";
+        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        expected.setStatus("preparing");
+
+        //when
+        when(orderPersistencePort.findEmployee())
+                .thenReturn(1L);
+        when(orderPersistencePort.findOrderById(orderId))
+                .thenReturn(expected);
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.updateStatus(orderId,status));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("The order must be pending to change it to preparing");
+    }
+
+    @Test
+    void updateStatusShouldThrowExceptionWhenStatusReadyDosNotAgree(){
+        //given
+        Long orderId = 1L;
+        String status = "ready";
+        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        expected.setStatus("pending");
+
+        //when
+        when(orderPersistencePort.findEmployee())
+                .thenReturn(1L);
+        when(orderPersistencePort.findOrderById(orderId))
+                .thenReturn(expected);
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.updateStatus(orderId,status));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("The order must be preparing to change it to ready");
+    }
+
+    @Test
+    void updateStatusShouldThrowExceptionWhenStatusDeliveredDosNotAgree(){
+        //given
+        Long orderId = 1L;
+        String status = "delivered";
+        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        expected.setStatus("preparing");
+
+        //when
+        when(orderPersistencePort.findEmployee())
+                .thenReturn(1L);
+        when(orderPersistencePort.findOrderById(orderId))
+                .thenReturn(expected);
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.updateStatus(orderId,status));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("The order must be ready to change it to delivered");
+    }
+
+////////////////////////////////<--- UPDATE TO DELIVERED --->///////////////////////////////////////////
+
+    @Test
+    void updateToDeliveredShouldChangeStatus() {
+        //given
+        Long orderId = 1L;
+        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        expected.setStatus("ready");
+
+        //then
+        when(orderPersistencePort.findEmployee())
+                .thenReturn(1L);
+        when(orderPersistencePort.findOrderById(orderId))
+                .thenReturn(expected);
+        when(orderPersistencePort.updateOrder(any()))
+                .thenReturn(expected);
+        OrderModel result = orderUseCase.updateToDelivered(orderId);
+
+        //then
+        assertEquals(expected, result);
+
+    }
+    ////////////////////////////////<--- DELETE ORDER --->///////////////////////////////////////////
     @Test
     void deleteOrder() {
+        //given
+        Long orderId = 1L;
+        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        expected.setStatus("pending");
+        expected.setIdClient(1L);
+
+
+        //when
+        when(orderPersistencePort.findOrderById(orderId))
+                .thenReturn(expected);
+        when(orderPersistencePort.findClientPhone(expected.getIdClient()))
+                .thenReturn("+1234567890");
+        orderUseCase.deleteOrder(orderId);
+
+        //then
+        Mockito.verify(orderPersistencePort, Mockito.times(1)).deleteOrder(orderId);;
     }
 
     @Test
-    void currentEmployeeValidate() {
+    void deleteOrderShouldThrowExceptionWhenStatusIsWrong(){
+        //given
+        Long orderId = 1L;
+        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        expected.setStatus("preparing");
+        expected.setIdClient(1L);
+
+        //when
+        when(orderPersistencePort.findOrderById(orderId))
+                .thenReturn(expected);
+        when(orderPersistencePort.findClientPhone(expected.getIdClient()))
+                .thenReturn("+1234567890");
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.deleteOrder(orderId));
+
+        //then
+        assertThat(raisedException).isInstanceOf(DomainException.class)
+                .hasMessageContaining("The order has been taken, cannot be cancelled");
     }
 
-    @Test
-    void sendMessageReady() {
-    }
 
-    @Test
-    void sendMessageRequestFail() {
-    }
+
+
 }

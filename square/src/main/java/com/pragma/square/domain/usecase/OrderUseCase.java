@@ -63,7 +63,7 @@ public class OrderUseCase implements IOrderServicePort {
     }
     @Override
     public OrderModel updateStatus(Long orderId,String status) {
-        if(!status.matches("preparing|ready|delivered")) throw new DomainException("Invalid status", HttpStatus.BAD_REQUEST);
+        if(!status.matches("preparing|ready|delivered")) throw new DomainException("Invalid status, must be : preparing|ready", HttpStatus.BAD_REQUEST);
      return orderPersistencePort.updateOrder(currentEmployeeValidate(orderId,status));
     }
 
@@ -78,7 +78,7 @@ public class OrderUseCase implements IOrderServicePort {
         String clientPhone = orderPersistencePort.findClientPhone(order.getIdClient());
         String phoneTransform = clientPhone.substring(1);
         if(!order.getStatus().equals("pending")){
-            sendMessageRequestFail(phoneTransform);
+            //sendMessageRequestFail(phoneTransform);
             throw new DomainException("The order has been taken, cannot be cancelled", HttpStatus.BAD_REQUEST);
         }
         orderPersistencePort.deleteOrder(orderId);
@@ -105,7 +105,7 @@ public class OrderUseCase implements IOrderServicePort {
             String phoneTransform = clientPhone.substring(1);
             System.out.println("soy number");
             System.out.println(clientPhone);
-            sendMessageReady(phoneTransform,order.getId());
+            //sendMessageReady(phoneTransform,order.getId());
         }
         order.setStatus(status);
         return order;
