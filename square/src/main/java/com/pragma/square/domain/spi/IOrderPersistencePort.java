@@ -1,13 +1,10 @@
 package com.pragma.square.domain.spi;
 
-import com.pragma.square.domain.models.ClientRequestModel;
 import com.pragma.square.domain.models.OrderModel;
 import com.pragma.square.domain.models.PlateModel;
+import com.pragma.square.domain.models.PlateQuantityModel;
 import com.pragma.square.domain.models.RestaurantModel;
-import jakarta.persistence.criteria.Order;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 public interface IOrderPersistencePort {
     OrderModel create(OrderModel order);
@@ -16,13 +13,20 @@ public interface IOrderPersistencePort {
 
     RestaurantModel findRestaurantById(Long id);
 
-    Boolean orderExists(Long idClient);
+    Boolean orderExists();
 
-    Long findEmployee(Long parseLong);
+    Long findEmployee(Long employeeId);
 
     Page<OrderModel> findByStatus(Long restaurantId, int page, int size, String sort, String status,String property);
 
     OrderModel findOrderById(Long plateId);
 
-    OrderModel updateToPreparing(OrderModel order);
+    OrderModel updateOrder(OrderModel order);
+
+    String findClientPhone(Long orderClientId);
+
+
+    void deleteOrder(Long orderId);
+
+    PlateQuantityModel createPlateQuantity(PlateQuantityModel quantity);
 }

@@ -29,12 +29,24 @@ public class OrderHandler implements IOrderHandler {
     }
 
     @Override
-    public Page<OrderResponseDto> findBySatus(int page, int size, String sort, String status,String property) {
-        return orderServicePort.findBySatus(page, size, sort, status,property).map(orderResponseMapper::toResponseDto);
+    public Page<OrderResponseDto> findByStatus(int page, int size, String sort, String status, String property) {
+        return orderServicePort.findByStatus(page, size, sort, status,property).map(orderResponseMapper::toResponseDto);
     }
 
     @Override
-    public OrderResponseDto updateToPreparing(Long plateId) {
-        return orderResponseMapper.toResponseDto(orderServicePort.updateToPreparing(plateId));
+    public OrderResponseDto updateStatus(Long plateId,String status) {
+        return orderResponseMapper.toResponseDto(orderServicePort.updateStatus(plateId,status));
     }
+
+    @Override
+    public OrderResponseDto updateToDelivered(Long orderId) {
+        return orderResponseMapper.toResponseDto(orderServicePort.updateToDelivered(orderId));
+    }
+
+    @Override
+    public void deleteOrder(Long orderId) {
+        orderServicePort.deleteOrder(orderId);
+    }
+
+
 }

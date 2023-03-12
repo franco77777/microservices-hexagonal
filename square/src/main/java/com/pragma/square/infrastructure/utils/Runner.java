@@ -75,7 +75,7 @@ RestaurantEntity restaurant1 = RestaurantEntity.builder()
                 .build();
         PlateEntity response2 = plateRepository.save(plate2);
 
-        result.setPlateList(Set.of(response));
+        result.setPlateList(Arrays.asList(response));
         RestaurantEntity result1 = restaurantRepository.save(result);
         System.out.println("soy plato");
         System.out.println(result1.toString());
@@ -102,5 +102,8 @@ ids.add(2L);
         System.out.println("soy ids");
         System.out.println(ids);
         System.out.println(ids.size());
+        String number = "+123";
+        System.out.println(number.charAt(0));
+        System.out.println(number.substring(1));
 
     }}

@@ -1,23 +1,22 @@
 package com.pragma.square.domain.models;
 
-import com.pragma.square.infrastructure.output.entity.RestaurantEntity;
+
 
 public class PlateModel {
     private Long id;
-
     private String name;
     private String price;
     private String description;
     private String imageUrl;
     private CategoryModel idCategory;
     private Boolean active;
-    private RestaurantEntity idRestaurant;
-    private Integer quantity;
+    private RestaurantModel idRestaurant;
+
 
     public PlateModel() {
     }
 
-    public PlateModel(Long id, String name, String price, String description, String imageUrl, CategoryModel idCategory, Boolean active, RestaurantEntity idRestaurant, Integer quantity) {
+    public PlateModel(Long id, String name, String price, String description, String imageUrl, CategoryModel idCategory, Boolean active, RestaurantModel idRestaurant) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -26,15 +25,7 @@ public class PlateModel {
         this.idCategory = idCategory;
         this.active = active;
         this.idRestaurant = idRestaurant;
-        this.quantity = quantity;
-    }
 
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
     }
 
     public Long getId() {
@@ -93,11 +84,11 @@ public class PlateModel {
         this.active = active;
     }
 
-    public RestaurantEntity getIdRestaurant() {
+    public RestaurantModel getIdRestaurant() {
         return idRestaurant;
     }
 
-    public void setIdRestaurant(RestaurantEntity idRestaurant) {
+    public void setIdRestaurant(RestaurantModel idRestaurant) {
         this.idRestaurant = idRestaurant;
     }
 }

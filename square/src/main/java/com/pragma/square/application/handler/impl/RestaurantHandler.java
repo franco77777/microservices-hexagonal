@@ -37,12 +37,6 @@ private final IRestaurantResponseMapper restaurantResponseMapper;
     public List<RestaurantResponseDto> getRestaurantsByUserId(Long userId) {
         return restaurantResponseMapper.toRestaurantResponseDtoList(restaurantServicePort.getRestaurantsByUserId(userId));
     }
-//    Page<Order> persistedOrderPage = orderQueryRepository.search();
-//
-//    Page<OrderDTO> orderPage = persistedOrderPage.map(persistedOrder -> {
-//        OrderDTO order = mapper.toOrderDTO(persistedOrder);
-//        // do another action
-//        return order;
 
     @Override
     public Page<RestaurantPageDto> getRestaurantsByPage(int page, int size, String sort) {

@@ -7,13 +7,14 @@ import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/square/employee")
+@RequestMapping("/square/users")
 @RequiredArgsConstructor
 public class EmployeeController {
     private final IEmployeeHandler employeeHandler;

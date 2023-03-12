@@ -1,6 +1,7 @@
 package com.pragma.square.application.response;
 
 import com.pragma.square.infrastructure.output.entity.PlateEntity;
+import com.pragma.square.infrastructure.output.entity.PlateQuantityEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,7 @@ public class OrderResponseDto {
     private String status;
     private Long idChef;
     private RestaurantResponseDto idRestaurant;
-    private List<PlateEntity> plates;
+    private List<PlateResponseDto> plates;
+
+    private List<PlateQuantityResponseDto> quantity;
 }

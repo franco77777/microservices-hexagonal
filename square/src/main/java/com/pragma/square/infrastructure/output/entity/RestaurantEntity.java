@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,10 +26,10 @@ public class RestaurantEntity {
     private String url;
     private Long userId;
     private String nit;
-  @OneToMany(mappedBy = "idRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "idRestaurant", fetch = FetchType.EAGER)
   @JsonIgnore
-   private Set<PlateEntity> plateList = new HashSet<>();
-  @OneToMany(mappedBy = "idRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   private List<PlateEntity> plateList = new ArrayList<>();
+  @OneToMany(mappedBy = "idRestaurant", fetch = FetchType.EAGER)
   @JsonIgnore
   private List<OrderEntity> ordersList;
 }

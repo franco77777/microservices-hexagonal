@@ -1,14 +1,12 @@
 package com.pragma.users.infrastructure.input;
-import com.pragma.users.application.handler.IObjectHandler;
-import com.pragma.users.application.mapper.IObjectRequestMapper;
+import com.pragma.users.application.handler.IUserHandler;
+import com.pragma.users.application.mapper.IUserRequestMapper;
 import com.pragma.users.application.request.UserRequestDto;
 import com.pragma.users.application.response.UserResponseDto;
 import com.pragma.users.infrastructure.output.entity.TokenDto;
-import com.pragma.users.infrastructure.output.services.UserService;
 import com.pragma.users.infrastructure.output.utils.AuthorityName;
-import com.pragma.users.infrastructure.output.utils.SquareFeingClient;
 import com.pragma.users.infrastructure.output.utils.SquareService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import com.pragma.users.infrastructure.security.JwtService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 
 @RestController
@@ -26,10 +23,12 @@ import java.util.Objects;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UserRegisterController {
-    private final UserService userService;
-    private final IObjectHandler objectHandler;
-    private final IObjectRequestMapper objectRequestMapper;
+
+    private final IUserHandler objectHandler;
+    private final IUserRequestMapper objectRequestMapper;
     private final SquareService squareService;
+
+    private final JwtService jwtService;
 
 
 
@@ -38,37 +37,35 @@ public class UserRegisterController {
 
         System.out.println("soy security");
         System.out.println(SecurityContextHolder.getContext());
-        return ResponseEntity.ok(objectHandler.getAllObjects());
+        return ResponseEntity.ok(objectHandler.getAllUsers());
     }
 
     @PostMapping("/client")
     public ResponseEntity<TokenDto> saveClient(@RequestBody @Valid UserRequestDto userRequestDto){
-        UserResponseDto responseDto =objectHandler.saveObject(userRequestDto, AuthorityName.ROLE_CLIENT);
-        TokenDto token = userService.registerToken(objectRequestMapper.toUserEntity(responseDto));
+        UserResponseDto responseDto =objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_CLIENT);
+        TokenDto token = jwtService.registerToken(objectRequestMapper.toUserEntity(responseDto));
 
         return new ResponseEntity<>(token, HttpStatus.CREATED);
     }
     //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
     public ResponseEntity<TokenDto> saveAdmin(@RequestBody @Valid UserRequestDto userRequestDto){
-        UserResponseDto responseDto = objectHandler.saveObject(userRequestDto, AuthorityName.ROLE_ADMIN);
-        TokenDto token = userService.registerToken(objectRequestMapper.toUserEntity(responseDto));
+        UserResponseDto responseDto = objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_ADMIN);
+        TokenDto token = jwtService.registerToken(objectRequestMapper.toUserEntity(responseDto));
         return new ResponseEntity<>(token, HttpStatus.CREATED);
     }
 
-   // @PreAuthorize("hasRole('ADMIN')")
+   @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/owner")
     public ResponseEntity<UserResponseDto> saveOwner(@RequestBody @Valid UserRequestDto userRequestDto){
-        UserResponseDto responseDto = objectHandler.saveObject(userRequestDto, AuthorityName.ROLE_OWNER);
-        //TokenDto token = userService.registerToken(objectRequestMapper.toUserEntity(responseDto));
+        UserResponseDto responseDto = objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_OWNER);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-   //@PreAuthorize("hasRole('OWNER')")
-
-    @PostMapping("/employee/{restaurantId}")
+   @PreAuthorize("hasRole('OWNER')")
+   @PostMapping("/employee/{restaurantId}")
     public ResponseEntity<String> saveEmployer(@RequestBody @Valid UserRequestDto userRequestDto, @PathVariable("restaurantId") Long restaurantId){
-        UserResponseDto responseDto = objectHandler.saveObject(userRequestDto, AuthorityName.ROLE_EMPLOYEE);
+        UserResponseDto responseDto = objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_EMPLOYEE);
         Long userId = responseDto.getId();
        try {
            String OwnerId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();

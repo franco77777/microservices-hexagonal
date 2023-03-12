@@ -7,6 +7,7 @@ import com.pragma.square.infrastructure.output.entity.RestaurantEntity;
 import com.pragma.square.infrastructure.output.mapper.IRestaurantEntityMapper;
 import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
 
+import com.pragma.square.infrastructure.utils.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +20,7 @@ import java.util.List;
 public class RestaurantJpaAdapter implements IRestaurantPersistencePort {
 private final IRestaurantRepository restaurantRepository;
 private final IRestaurantEntityMapper restaurantEntityMapper;
-
-
+private final UserService userService;
 
 
 
@@ -56,5 +56,10 @@ private final IRestaurantEntityMapper restaurantEntityMapper;
         }
         if(pages.isEmpty()) throw new InfrastructureException("no restaurants in this database", HttpStatus.NOT_FOUND);
         return pages.map(restaurantEntityMapper::toRestaurantModel);
+    }
+
+    @Override
+    public String getRoleUser(Long userId) {
+        return userService.getClientRole(userId);
     }
 }

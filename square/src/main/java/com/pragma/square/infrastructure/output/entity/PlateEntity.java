@@ -38,18 +38,16 @@ public class PlateEntity {
 
     private CategoryEntity idCategory;
     private Boolean active;
-    private Integer quantity;
-    @ManyToOne()
+    @ManyToMany(fetch = FetchType.EAGER,mappedBy = "plates")
     @JsonIgnore
-    @JoinColumn(name="plates_id", insertable=false, updatable=false)
-    private OrderEntity order;
+    private List<OrderEntity> order;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_restaurant")
     @JsonIncludeProperties(value = {"id"})
     private RestaurantEntity idRestaurant;
-//@OneToMany(mappedBy = "idPlate",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//@JsonIgnore
-//private List<OrderPlateEntity> orderPlate;
+
+
+
 
 
 

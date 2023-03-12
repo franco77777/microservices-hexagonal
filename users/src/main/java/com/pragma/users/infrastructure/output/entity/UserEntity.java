@@ -21,23 +21,15 @@ public class UserEntity implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
     private String firstname;
     //@Column(columnDefinition = "TEXT")
-
     private String lastname;
-
     private String mobile;
-
     private String password;
-
     @Column(unique = true)
     private String email;
     private String dni;
-
-
-@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private AuthorityName roles;
 
 

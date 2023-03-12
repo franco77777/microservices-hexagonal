@@ -50,36 +50,23 @@ public class WebConfiguration {
 //    }
     private final IUserRepository userRepository;
 
+    private final JwtService jwtService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         PreAuthenticatedUserRoleHeaderFilter authFilter
-                = new PreAuthenticatedUserRoleHeaderFilter(userRepository);
+                = new PreAuthenticatedUserRoleHeaderFilter(userRepository,jwtService);
         return http
-//                .csrf().disable()
-//                .authorizeHttpRequests()
-//                .requestMatchers("/user/register/test").permitAll()
-//                .requestMatchers("/user/register/authenticate").permitAll()
-//                .anyRequest().authenticated()
-//                .and()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .addFilterBefore(authFilter, BasicAuthenticationFilter.class)
-//                .authorizeHttpRequests()
-//                .anyRequest().authenticated()
-//                .and()
-//                .httpBasic(Customizer.withDefaults())
-//                .build();
-//
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(authFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests()
-                .requestMatchers("/user/register/**").permitAll()
-                .requestMatchers("/user/auth/authenticate").permitAll()
-                .requestMatchers("/user/auth/validate").permitAll()
+                .requestMatchers("/user/validate").permitAll()
+                .requestMatchers("/user/login").permitAll()
+                .requestMatchers("/user/register/client").permitAll()
+                .requestMatchers("/user/register/admin").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic(Customizer.withDefaults())
@@ -87,14 +74,7 @@ public class WebConfiguration {
 
     }
 
-
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-//        return config.getAuthenticationManager();
-//    }
-@Bean
-public PasswordEncoder passwordEncoder() {
+    @Bean public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
 }
 

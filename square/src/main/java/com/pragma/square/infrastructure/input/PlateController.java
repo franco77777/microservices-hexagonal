@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,21 +31,15 @@ public class PlateController {
 
 
     @GetMapping()
-    public List<PlateEntity> existe (){
+    public List<PlateEntity> getAll (){
         List<PlateEntity> result = plateRepository.findAll();
         return result;
     }
-
-
-
     @GetMapping("/pagination/{categoryId}/{restaurantId}")
-    public ResponseEntity<PagesDto<Page<PlateResponseDto>>> test(@PathVariable("categoryId") Long categoryId, @PathVariable("restaurantId") Long restaurantId, @RequestParam int page, @RequestParam int size, @RequestParam String sort, @RequestParam String property) {
-        //Page<PlateEntity> result = plateRepository.findAllByIdCategory_IdAndIdRestaurant_Id( categoryId,restaurantId, PageRequest.of(page, size).withSort(Sort.by(Sort.Direction.ASC,property))).orElseThrow();
+    public ResponseEntity<PagesDto<Page<PlateResponseDto>>> platesPage(@PathVariable("categoryId") Long categoryId, @PathVariable("restaurantId") Long restaurantId, @RequestParam int page, @RequestParam int size, @RequestParam String sort, @RequestParam String property) {
         Page<PlateResponseDto> response = plateHandler.getPlateResponseDtoByPage(categoryId,restaurantId,page,size,property,sort);
         return ResponseEntity.ok(new PagesDto<>(response.getSize(), response));
     }
-
-
 
 
     @PreAuthorize("hasRole('OWNER')")
@@ -55,13 +50,13 @@ public class PlateController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<PlateResponseDto> update(@Valid @RequestBody PlateUpdateRequestDto update, @PathVariable("id") Long plateId){
         PlateResponseDto response = plateHandler.updatePlate(update,plateId);
         return  ResponseEntity.ok(response);
     }
     @PreAuthorize("hasRole('OWNER')")
-    @GetMapping("/deactivate/{id}")
+    @PutMapping("/deactivate/{id}")
     public ResponseEntity<PlateResponseDto> deactivatePlate(@PathVariable("id") Long plateId){
         PlateResponseDto response = plateHandler.deactivatePlate(plateId);
         return ResponseEntity.ok(response);

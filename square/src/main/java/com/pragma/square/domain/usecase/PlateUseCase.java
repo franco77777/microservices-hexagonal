@@ -21,14 +21,14 @@ public class PlateUseCase implements IPlateServicePort {
     }
 
     @Override
-    public PlateModel savePlate(PlateModel plateModel, Long idRestaurant,Long categoryId) {
+    public PlateModel savePlate(PlateModel plateModel, Long restaurantId,Long categoryId) {
         //validating whether the current user corresponds to the restaurant's userId//
-        RestaurantModel restaurant = platePersistencePort.getRestaurant(idRestaurant);
+        RestaurantModel restaurant = platePersistencePort.getRestaurant(restaurantId);
         Long restaurantUserId = restaurant.getUserId();
         if(validateUserId(restaurantUserId)) throw new DomainException("You are not allowed to save this plate", HttpStatus.UNAUTHORIZED);
         plateModel.setActive(true);
         //saving the plate//
-        return platePersistencePort.savePlate(plateModel,idRestaurant,categoryId);
+        return platePersistencePort.savePlate(plateModel,restaurantId,categoryId);
     }
 
     @Override

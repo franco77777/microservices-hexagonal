@@ -29,26 +29,19 @@ public class RestaurantController {
 
     @GetMapping()
     public ResponseEntity<List<RestaurantResponseDto>> getAll() {
-    System.out.println("soy context");
-    System.out.println(SecurityContextHolder.getContext().getAuthentication().getCredentials().toString());
-    System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-
-
         return ResponseEntity.ok(restaurantHandler.getAllRestaurants());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<List<RestaurantResponseDto>> getByUserId(@PathVariable("id") Long userId) {
-
         List<RestaurantResponseDto> result = restaurantHandler.getRestaurantsByUserId(userId);
        return ResponseEntity.ok(result);
 
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create/{ownerId}")
+    @PostMapping("/{ownerId}")
     public ResponseEntity<RestaurantResponseDto> createRestaurant(@RequestBody @Valid RestaurantRequestDto restaurant,@PathVariable("ownerId") Long ownerId) {
-     Long UserId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getCredentials().toString());
-     if(ownerId == null) throw new InfrastructureException( "ownerId is null",HttpStatus.BAD_REQUEST);
+       // if(ownerId == null) throw new InfrastructureException( "ownerId is null",HttpStatus.BAD_REQUEST);
      restaurant.setUserId(ownerId);
      RestaurantResponseDto response = restaurantHandler.saveRestaurant(restaurant);
      return  new ResponseEntity<>(response, HttpStatus.CREATED);

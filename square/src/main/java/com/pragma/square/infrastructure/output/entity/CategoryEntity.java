@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class CategoryEntity {
     private Long id;
     private String categoryName;
     private String description;
-   @OneToMany(mappedBy = "idCategory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   @OneToMany(mappedBy = "idCategory", fetch = FetchType.EAGER)
    @JsonIgnore
-    private Set<PlateEntity> plate= new HashSet<>();
+    private List<PlateEntity> plate= new ArrayList<>();
 }

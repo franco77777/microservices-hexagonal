@@ -18,6 +18,10 @@ private final IRestaurantPersistencePort restaurantPersistencePort;
 
     @Override
     public RestaurantModel saveRestaurant(RestaurantModel restaurantModel) {
+        String roleUser = restaurantPersistencePort.getRoleUser(restaurantModel.getUserId());
+        if(roleUser.equals("false")){
+            throw new DomainException("the user id is not a owner",HttpStatus.UNAUTHORIZED);
+        }
         return restaurantPersistencePort.saveRestaurant(restaurantModel);
     }
 
