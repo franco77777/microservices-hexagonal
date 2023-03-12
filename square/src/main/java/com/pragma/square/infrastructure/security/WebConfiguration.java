@@ -48,7 +48,7 @@ public class WebConfiguration {
                 .requestMatchers("/square/restaurant/pagination").permitAll()
                 .requestMatchers("/square/plate/pagination/**").permitAll()
                 .requestMatchers("/square/users/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic(Customizer.withDefaults())
                 .build();
