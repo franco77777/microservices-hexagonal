@@ -1,22 +1,14 @@
 package com.pragma.square.infrastructure.output.adapter;
 
-import com.pragma.square.domain.models.ClientRequestModel;
-import com.pragma.square.domain.models.OrderModel;
-import com.pragma.square.domain.models.PlateModel;
-import com.pragma.square.domain.models.RestaurantModel;
+import com.pragma.square.domain.models.*;
 import com.pragma.square.domain.spi.IOrderPersistencePort;
 import com.pragma.square.infrastructure.exception.InfrastructureException;
-import com.pragma.square.infrastructure.output.entity.EmployeeEntity;
-import com.pragma.square.infrastructure.output.entity.OrderEntity;
-import com.pragma.square.infrastructure.output.entity.PlateEntity;
-import com.pragma.square.infrastructure.output.entity.RestaurantEntity;
+import com.pragma.square.infrastructure.output.entity.*;
 import com.pragma.square.infrastructure.output.mapper.IOrderEntityMapper;
 import com.pragma.square.infrastructure.output.mapper.IPlateEntityMapper;
+import com.pragma.square.infrastructure.output.mapper.IPlateQuantityEntityMapper;
 import com.pragma.square.infrastructure.output.mapper.IRestaurantEntityMapper;
-import com.pragma.square.infrastructure.output.repository.IEmployeeRepository;
-import com.pragma.square.infrastructure.output.repository.IOrderRepository;
-import com.pragma.square.infrastructure.output.repository.IPlateRepository;
-import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
+import com.pragma.square.infrastructure.output.repository.*;
 import com.pragma.square.infrastructure.utils.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,6 +28,8 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
     private final IEmployeeRepository employeeRepository;
+    private final IPlateQuantityEntityMapper plateQuantityEntityMapper;
+    private final IPlateQuantityRepository plateQuantityRepository;
     private final UserService userService;
 
     @Override
@@ -64,11 +58,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     }
 
     @Override
-    public Long findEmployee() {
-        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
-        Long employeeId = Long.parseLong(currentUserId);
-        System.out.println("soy id user");
-        System.out.println(employeeId);
+    public Long findEmployee(Long employeeId) {
         EmployeeEntity employeeEntity = employeeRepository.findByEmployeeId(employeeId).orElseThrow(()->new InfrastructureException("you are not an employee",HttpStatus.UNAUTHORIZED));
         return employeeEntity.getRestaurantId();
     }
@@ -106,6 +96,13 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     @Override
     public void deleteOrder(Long orderId) {
         orderRepository.deleteById(orderId);
+    }
+
+    @Override
+    public PlateQuantityModel createPlateQuantity(PlateQuantityModel quantity) {
+        PlateQuantityEntity result = plateQuantityEntityMapper.toEntity(quantity);
+        PlateQuantityEntity response = plateQuantityRepository.save(result);
+        return plateQuantityEntityMapper.toModel(response);
     }
 
 

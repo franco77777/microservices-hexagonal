@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,17 +55,15 @@ public class UserRegisterController {
         return new ResponseEntity<>(token, HttpStatus.CREATED);
     }
 
-   // @PreAuthorize("hasRole('ADMIN')")
+   @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/owner")
     public ResponseEntity<UserResponseDto> saveOwner(@RequestBody @Valid UserRequestDto userRequestDto){
         UserResponseDto responseDto = objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_OWNER);
-        //TokenDto token = userService.registerToken(objectRequestMapper.toUserEntity(responseDto));
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-   //@PreAuthorize("hasRole('OWNER')")
-
-    @PostMapping("/employee/{restaurantId}")
+   @PreAuthorize("hasRole('OWNER')")
+   @PostMapping("/employee/{restaurantId}")
     public ResponseEntity<String> saveEmployer(@RequestBody @Valid UserRequestDto userRequestDto, @PathVariable("restaurantId") Long restaurantId){
         UserResponseDto responseDto = objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_EMPLOYEE);
         Long userId = responseDto.getId();

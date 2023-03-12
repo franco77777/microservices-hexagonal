@@ -11,4 +11,6 @@ public interface IRestaurantPersistencePort {
     List<RestaurantModel> getRestaurantsByUserId (Long userId);
 
     Page<RestaurantModel> getRestaurantsByPage(int page, int size, String sort);
+
+    String getRoleUser(Long userId);
 }

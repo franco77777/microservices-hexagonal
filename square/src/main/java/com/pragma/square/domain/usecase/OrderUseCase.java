@@ -2,10 +2,7 @@ package com.pragma.square.domain.usecase;
 
 import com.pragma.square.domain.api.IOrderServicePort;
 import com.pragma.square.domain.exception.DomainException;
-import com.pragma.square.domain.models.ClientRequestModel;
-import com.pragma.square.domain.models.OrderModel;
-import com.pragma.square.domain.models.PlateModel;
-import com.pragma.square.domain.models.RestaurantModel;
+import com.pragma.square.domain.models.*;
 import com.pragma.square.domain.spi.IOrderPersistencePort;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -32,33 +29,55 @@ public class OrderUseCase implements IOrderServicePort {
         String idClient = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
         Boolean orderAlreadyExists = orderPersistencePort.orderExists();
         if(orderAlreadyExists) throw new DomainException("Order already exists",HttpStatus.BAD_REQUEST);
-        List<PlateModel> plates = new ArrayList<>();
-        Set<Long> restaurantId= new HashSet<>();
-        for (ClientRequestModel order : requests) {
-            if(order.getPlateId() == null) throw new DomainException("plateId can't be null and must be a number", HttpStatus.BAD_REQUEST);
-            if(order.getQuantity() == null) throw new DomainException("quantity can't be null and must be a number", HttpStatus.BAD_REQUEST);
-            PlateModel plateFound = orderPersistencePort.findPlateById(order.getPlateId());
-            restaurantId.add(plateFound.getIdRestaurant().getId());
-            plateFound.setQuantity(order.getQuantity());
-            plates.add(plateFound);
-        }
-        if(restaurantId.size()>1)throw new DomainException("Dishes must be from a single restaurant", HttpStatus.BAD_REQUEST);
+        List<PlateModel> plates = platesForTheOrder(requests);
+        List<PlateQuantityModel> quantity = platesQuantityForTheOrder(requests);
         RestaurantModel restaurant = orderPersistencePort.findRestaurantById(plates.get(0).getIdRestaurant().getId());
         OrderModel order = new OrderModel();
         order.setIdClient(Long.parseLong(idClient));
         order.setOrderDate(new Date());
         order.setStatus("pending");
         order.setPlates(plates);
+        order.setQuantity(quantity);
         order.setIdRestaurant(restaurant);
         return orderPersistencePort.create(order);
     }
 
+    private List<PlateModel> platesForTheOrder(List<ClientRequestModel> requests) {
+        List<PlateModel> plates = new ArrayList<>();
+        Set<Long> restaurantId= new HashSet<>();
+        for (ClientRequestModel order : requests) {
+            if(order.getPlateId() == null) throw new DomainException("plateId can't be null and must be a number", HttpStatus.BAD_REQUEST);
+            if(order.getQuantity() == null) throw new DomainException("quantity can't be null and must be a number", HttpStatus.BAD_REQUEST);
+            PlateModel plateFound = orderPersistencePort.findPlateById(order.getPlateId());
+            if(plateFound.getActive().equals(false)) throw new DomainException("plate id: "+plateFound.getId()+" is not active", HttpStatus.BAD_REQUEST);
+            restaurantId.add(plateFound.getIdRestaurant().getId());
+            //plateFound.setQuantity(order.getQuantity());
+            plates.add(plateFound);
+        }
+        if(restaurantId.size()>1)throw new DomainException("Dishes must be from a single restaurant", HttpStatus.BAD_REQUEST);
+        return plates;
+    }
+
+    private List<PlateQuantityModel> platesQuantityForTheOrder(List<ClientRequestModel> requests){
+        List<PlateQuantityModel> platesQuantity = new ArrayList<>();
+        for (ClientRequestModel order : requests) {
+            PlateQuantityModel quantity = new PlateQuantityModel();
+            quantity.setPlateId(order.getPlateId());
+            quantity.setQuantity(order.getQuantity());
+            platesQuantity.add( orderPersistencePort.createPlateQuantity(quantity));
+
+        }
+        return platesQuantity;
+    }
+
     @Override
     public Page<OrderModel> findByStatus(int page, int size, String sort, String status,String property) {
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        Long employeeId = Long.parseLong(currentUserId);
         if(!status.matches("pending|preparing|ready")) throw new DomainException("Invalid status, must be: pending|preparing|ready", HttpStatus.BAD_REQUEST);
         if(!property.matches("id|orderDate|idClient|idChef")) throw new DomainException("Invalid property, must be: id|orderDate|idClient|idChef", HttpStatus.BAD_REQUEST);
         if(!sort.matches("ascending|descending"))  throw new DomainException("Invalid sort, must be: ascending|descending", HttpStatus.BAD_REQUEST);
-        Long restaurantId = orderPersistencePort.findEmployee();
+        Long restaurantId = orderPersistencePort.findEmployee(employeeId);
         return orderPersistencePort.findByStatus(restaurantId, page, size, sort, status,property);
     }
     @Override
@@ -74,7 +93,11 @@ public class OrderUseCase implements IOrderServicePort {
 
     @Override
     public void deleteOrder(Long orderId) {
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        Long userIdLogged = Long.parseLong(currentUserId);
         OrderModel order = orderPersistencePort.findOrderById(orderId);
+        Long userIdOfOrder = order.getIdClient();
+        if(!userIdOfOrder.equals(userIdLogged)) throw new DomainException("You can't delete this order",HttpStatus.UNAUTHORIZED);
         String clientPhone = orderPersistencePort.findClientPhone(order.getIdClient());
         String phoneTransform = clientPhone.substring(1);
         if(!order.getStatus().equals("pending")){
@@ -85,7 +108,9 @@ public class OrderUseCase implements IOrderServicePort {
     }
 
     public OrderModel currentEmployeeValidate(Long orderId,String status) {
-        Long restaurantIdOfEmployee = orderPersistencePort.findEmployee();
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        Long employeeId = Long.parseLong(currentUserId);
+        Long restaurantIdOfEmployee = orderPersistencePort.findEmployee(employeeId);
         OrderModel order = orderPersistencePort.findOrderById(orderId);
         Long restaurantIdOfOrder = order.getIdRestaurant().getId();
         if(!Objects.equals(restaurantIdOfEmployee, restaurantIdOfOrder)) {
@@ -108,13 +133,14 @@ public class OrderUseCase implements IOrderServicePort {
             //sendMessageReady(phoneTransform,order.getId());
         }
         order.setStatus(status);
+        order.setIdChef(employeeId);
         return order;
     }
 
 
 
     public void sendMessageReady(String number,Long idOrder) {
-        if(number.equals("1")) {return;}
+        if(number.equals("7777777")) {return;}
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI("https://graph.facebook.com/v16.0/108928785480520/messages"))
@@ -132,7 +158,7 @@ public class OrderUseCase implements IOrderServicePort {
         }
     }
     public void sendMessageRequestFail(String number) {
-        if(number.equals("1")) {return;}
+        if(number.equals("7777777")) {return;}
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI("https://graph.facebook.com/v16.0/108928785480520/messages"))

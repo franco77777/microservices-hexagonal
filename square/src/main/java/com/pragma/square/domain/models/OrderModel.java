@@ -1,6 +1,7 @@
 package com.pragma.square.domain.models;
 
-import com.pragma.square.infrastructure.output.entity.PlateEntity;
+
+import com.pragma.square.infrastructure.output.entity.PlateQuantityEntity;
 
 import java.util.Date;
 import java.util.List;
@@ -14,10 +15,12 @@ public class OrderModel {
     private List<PlateModel> plates;
     private RestaurantModel idRestaurant;
 
+    private List<PlateQuantityModel> quantity;
+
     public OrderModel() {
     }
 
-    public OrderModel(Long id, Long idClient, Date orderDate, String status, Long idChef, List<PlateModel> plates, RestaurantModel idRestaurant) {
+    public OrderModel(Long id, Long idClient, Date orderDate, String status, Long idChef, List<PlateModel> plates, RestaurantModel idRestaurant, List<PlateQuantityModel> quantity) {
         this.id = id;
         this.idClient = idClient;
         this.orderDate = orderDate;
@@ -25,14 +28,7 @@ public class OrderModel {
         this.idChef = idChef;
         this.plates = plates;
         this.idRestaurant = idRestaurant;
-    }
-
-    public List<PlateModel> getPlates() {
-        return plates;
-    }
-
-    public void setPlates(List<PlateModel> plates) {
-        this.plates = plates;
+        this.quantity = quantity;
     }
 
     public Long getId() {
@@ -75,11 +71,27 @@ public class OrderModel {
         this.idChef = idChef;
     }
 
+    public List<PlateModel> getPlates() {
+        return plates;
+    }
+
+    public void setPlates(List<PlateModel> plates) {
+        this.plates = plates;
+    }
+
     public RestaurantModel getIdRestaurant() {
         return idRestaurant;
     }
 
     public void setIdRestaurant(RestaurantModel idRestaurant) {
         this.idRestaurant = idRestaurant;
+    }
+
+    public List<PlateQuantityModel> getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(List<PlateQuantityModel> quantity) {
+        this.quantity = quantity;
     }
 }

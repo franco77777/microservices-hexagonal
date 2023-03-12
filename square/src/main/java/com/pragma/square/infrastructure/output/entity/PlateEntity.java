@@ -38,7 +38,6 @@ public class PlateEntity {
 
     private CategoryEntity idCategory;
     private Boolean active;
-    private Integer quantity;
     @ManyToMany(fetch = FetchType.EAGER,mappedBy = "plates")
     @JsonIgnore
     private List<OrderEntity> order;

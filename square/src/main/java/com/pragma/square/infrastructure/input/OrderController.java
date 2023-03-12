@@ -35,7 +35,7 @@ public class OrderController {
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     @GetMapping()
-    public ResponseEntity<PagesDto<Page<OrderResponseDto>>> test(
+    public ResponseEntity<PagesDto<Page<OrderResponseDto>>> page(
             @RequestParam int page, @RequestParam int size,@RequestParam String sort,
             @RequestParam String status,@RequestParam String property
     ){
@@ -48,7 +48,7 @@ public class OrderController {
     }
     @PreAuthorize("hasRole('EMPLOYEE')")
     @PutMapping("/{orderId}")
-    public ResponseEntity<OrderResponseDto> updateToPreparing(@PathVariable Long orderId,@RequestParam String status){
+    public ResponseEntity<OrderResponseDto> update(@PathVariable Long orderId,@RequestParam String status){
         String currentUSer = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
         Long currentUserId = Long.parseLong(currentUSer.split(":")[0]);
         System.out.println("soy credenciales2");

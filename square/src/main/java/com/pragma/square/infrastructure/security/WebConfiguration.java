@@ -44,7 +44,11 @@ public class WebConfiguration {
                 .and()
                 .addFilterBefore(authFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests()
-                .anyRequest().permitAll()
+                .requestMatchers("/square/category").permitAll()
+                .requestMatchers("/square/restaurant/pagination").permitAll()
+                .requestMatchers("/square/plate/pagination/**").permitAll()
+                .requestMatchers("/square/users/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic(Customizer.withDefaults())
                 .build();

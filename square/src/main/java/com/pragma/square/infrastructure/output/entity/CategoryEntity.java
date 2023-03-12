@@ -22,7 +22,7 @@ public class CategoryEntity {
     private Long id;
     private String categoryName;
     private String description;
-   @OneToMany(mappedBy = "idCategory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   @OneToMany(mappedBy = "idCategory", fetch = FetchType.EAGER)
    @JsonIgnore
     private List<PlateEntity> plate= new ArrayList<>();
 }

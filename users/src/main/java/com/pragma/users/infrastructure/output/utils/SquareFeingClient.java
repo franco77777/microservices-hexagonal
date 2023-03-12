@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient(name = "square-service", url = "http://localhost:8081")
 public interface SquareFeingClient {
 
-    @PostMapping("/square/employee/{OwnerId}/{restaurantId}/{employeeId}")
+    @PostMapping("/square/users/{OwnerId}/{restaurantId}/{employeeId}")
     Boolean createEmployee(@PathVariable("OwnerId") Long OwnerId, @PathVariable("restaurantId") Long restaurantId, @PathVariable("employeeId") Long employeeId);
 
     }

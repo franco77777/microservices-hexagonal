@@ -2,6 +2,7 @@ package com.pragma.square.domain.spi;
 
 import com.pragma.square.domain.models.OrderModel;
 import com.pragma.square.domain.models.PlateModel;
+import com.pragma.square.domain.models.PlateQuantityModel;
 import com.pragma.square.domain.models.RestaurantModel;
 import org.springframework.data.domain.Page;
 
@@ -14,7 +15,7 @@ public interface IOrderPersistencePort {
 
     Boolean orderExists();
 
-    Long findEmployee();
+    Long findEmployee(Long employeeId);
 
     Page<OrderModel> findByStatus(Long restaurantId, int page, int size, String sort, String status,String property);
 
@@ -26,4 +27,6 @@ public interface IOrderPersistencePort {
 
 
     void deleteOrder(Long orderId);
+
+    PlateQuantityModel createPlateQuantity(PlateQuantityModel quantity);
 }

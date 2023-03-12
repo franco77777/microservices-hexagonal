@@ -16,19 +16,18 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/user/auth")
+@RequestMapping("/user")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UserAuthController {
     private final IUserHandler userHandler;
     private final JwtService jwtService;
-
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final IUserEntityMapper userEntityMapper;
 
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public ResponseEntity<TokenDto> authenticate(
             @RequestBody @Validated AuthenticateRequestDto request
     ) {

@@ -31,7 +31,7 @@ public class UserUseCase implements IUserServicePort {
         userModel.setRoles(role);
         UserModel savedUser = userPersistencePort.saveUser(userModel);
         String number = savedUser.getMobile().substring(1);
-        sendMessageConfirmation(number);
+        //sendMessageConfirmation(number);
 
        return savedUser;
     }
@@ -61,7 +61,7 @@ public class UserUseCase implements IUserServicePort {
     }
 
     public void sendMessageConfirmation(String number){
-        if(number.equals("1") )return;
+        if(number.equals("7777777") )return;
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI("https://graph.facebook.com/v16.0/108928785480520/messages"))

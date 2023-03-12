@@ -1,4 +1,5 @@
 package com.pragma.square.infrastructure.output.entity;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,9 @@ public class OrderEntity {
     private Date orderDate;
     private String status;
     private Long idChef;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "id_restaurant")
+    private RestaurantEntity idRestaurant;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "order_plates",
             joinColumns = @JoinColumn(name = "order_id"),
@@ -27,12 +31,9 @@ public class OrderEntity {
     )
     private List<PlateEntity> plates;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "id_restaurant")
-    private RestaurantEntity idRestaurant;
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name="quantity_id")
+    private List<PlateQuantityEntity> quantity;
 
-//    @OneToMany(mappedBy = "idOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<OrderPlateEntity> orderPlate;
 
 }

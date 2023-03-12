@@ -26,10 +26,10 @@ public class RestaurantEntity {
     private String url;
     private Long userId;
     private String nit;
-  @OneToMany(mappedBy = "idRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "idRestaurant", fetch = FetchType.EAGER)
   @JsonIgnore
    private List<PlateEntity> plateList = new ArrayList<>();
-  @OneToMany(mappedBy = "idRestaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "idRestaurant", fetch = FetchType.EAGER)
   @JsonIgnore
   private List<OrderEntity> ordersList;
 }

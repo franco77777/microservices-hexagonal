@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/square/employee")
+@RequestMapping("/square/users")
 @RequiredArgsConstructor
 public class EmployeeController {
     private final IEmployeeHandler employeeHandler;
@@ -24,8 +24,6 @@ public class EmployeeController {
         employeeHandler.createEmployee(OwnerId,restaurantId,employeeId);
         return new ResponseEntity<>(true, HttpStatus.CREATED);
     }
-
-
     @GetMapping
     public ResponseEntity<List<EmployeeEntity>> get (){
         return ResponseEntity.ok(employeeRepository.findAll());
