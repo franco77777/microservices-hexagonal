@@ -42,34 +42,6 @@ public class OrderUseCase implements IOrderServicePort {
         return orderPersistencePort.create(order);
     }
 
-    private List<PlateModel> platesForTheOrder(List<ClientRequestModel> requests) {
-        List<PlateModel> plates = new ArrayList<>();
-        Set<Long> restaurantId= new HashSet<>();
-        for (ClientRequestModel order : requests) {
-            if(order.getPlateId() == null) throw new DomainException("plateId can't be null and must be a number", HttpStatus.BAD_REQUEST);
-            if(order.getQuantity() == null) throw new DomainException("quantity can't be null and must be a number", HttpStatus.BAD_REQUEST);
-            PlateModel plateFound = orderPersistencePort.findPlateById(order.getPlateId());
-            if(plateFound.getActive().equals(false)) throw new DomainException("plate id: "+plateFound.getId()+" is not active", HttpStatus.BAD_REQUEST);
-            restaurantId.add(plateFound.getIdRestaurant().getId());
-            //plateFound.setQuantity(order.getQuantity());
-            plates.add(plateFound);
-        }
-        if(restaurantId.size()>1)throw new DomainException("Dishes must be from a single restaurant", HttpStatus.BAD_REQUEST);
-        return plates;
-    }
-
-    private List<PlateQuantityModel> platesQuantityForTheOrder(List<ClientRequestModel> requests){
-        List<PlateQuantityModel> platesQuantity = new ArrayList<>();
-        for (ClientRequestModel order : requests) {
-            PlateQuantityModel quantity = new PlateQuantityModel();
-            quantity.setPlateId(order.getPlateId());
-            quantity.setQuantity(order.getQuantity());
-            platesQuantity.add( orderPersistencePort.createPlateQuantity(quantity));
-
-        }
-        return platesQuantity;
-    }
-
     @Override
     public Page<OrderModel> findByStatus(int page, int size, String sort, String status,String property) {
         String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
@@ -176,6 +148,33 @@ public class OrderUseCase implements IOrderServicePort {
         }
     }
 
+    private List<PlateModel> platesForTheOrder(List<ClientRequestModel> requests) {
+        List<PlateModel> plates = new ArrayList<>();
+        Set<Long> restaurantId= new HashSet<>();
+        for (ClientRequestModel order : requests) {
+            if(order.getPlateId() == null) throw new DomainException("plateId can't be null and must be a number", HttpStatus.BAD_REQUEST);
+            if(order.getQuantity() == null) throw new DomainException("quantity can't be null and must be a number", HttpStatus.BAD_REQUEST);
+            PlateModel plateFound = orderPersistencePort.findPlateById(order.getPlateId());
+            if(plateFound.getActive().equals(false)) throw new DomainException("plate id: "+plateFound.getId()+" is not active", HttpStatus.BAD_REQUEST);
+            restaurantId.add(plateFound.getIdRestaurant().getId());
+            //plateFound.setQuantity(order.getQuantity());
+            plates.add(plateFound);
+        }
+        if(restaurantId.size()>1)throw new DomainException("Dishes must be from a single restaurant", HttpStatus.BAD_REQUEST);
+        return plates;
+    }
+
+    private List<PlateQuantityModel> platesQuantityForTheOrder(List<ClientRequestModel> requests){
+        List<PlateQuantityModel> platesQuantity = new ArrayList<>();
+        for (ClientRequestModel order : requests) {
+            PlateQuantityModel quantity = new PlateQuantityModel();
+            quantity.setPlateId(order.getPlateId());
+            quantity.setQuantity(order.getQuantity());
+            platesQuantity.add( orderPersistencePort.createPlateQuantity(quantity));
+
+        }
+        return platesQuantity;
+    }
 
 
 }

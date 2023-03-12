@@ -31,10 +31,13 @@ class RestaurantUseCaseTest {
     void saveRestaurant() {
         //given
         RestaurantModel restaurantModel = new RestaurantModel();
+        restaurantModel.setUserId(1L);
 
         //when
         when(restaurantPersistencePort.saveRestaurant(any(RestaurantModel.class)))
                 .thenReturn(restaurantModel);
+        when(restaurantPersistencePort.getRoleUser(anyLong()))
+                .thenReturn("true");
         RestaurantModel result = restaurantUseCase.saveRestaurant(restaurantModel);
 
         //given

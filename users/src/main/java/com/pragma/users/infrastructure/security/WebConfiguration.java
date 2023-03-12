@@ -65,7 +65,6 @@ public class WebConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/user/validate").permitAll()
                 .requestMatchers("/user/login").permitAll()
-                .requestMatchers("/user/square/**").permitAll()
                 .requestMatchers("/user/register/client").permitAll()
                 .requestMatchers("/user/register/admin").permitAll()
                 .anyRequest().authenticated()

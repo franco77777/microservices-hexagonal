@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,9 +19,11 @@ import java.io.IOException;
 import java.security.Key;
 import java.util.List;
 import java.util.function.Function;
-
+@RequiredArgsConstructor
 public class PreAuthenticatedUserRoleHeaderFilter
         extends GenericFilterBean {
+
+    private final JwtService jwtService;
 
     public void doFilter(ServletRequest servletRequest,
                          ServletResponse servletResponse,
@@ -38,11 +41,12 @@ public class PreAuthenticatedUserRoleHeaderFilter
             return;
         }
         jwt = authHeader.substring(7);
-        userEmail = extractUsername(jwt);
-        Roles = extractUserRole(jwt);
-        UserId = extractUserId(jwt);
-        System.out.println("soy el user id de token");
-        System.out.println(UserId);
+        userEmail = jwtService.extractUsername(jwt);
+        Roles = jwtService.extractUserRole(jwt);
+        UserId = jwtService.extractUserId(jwt);
+
+        jwtService.setToken(jwt);
+
         List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Roles);
         PreAuthenticatedAuthenticationToken authentication
                 = new PreAuthenticatedAuthenticationToken(
@@ -52,33 +56,6 @@ public class PreAuthenticatedUserRoleHeaderFilter
         System.out.println(SecurityContextHolder.getContext());
         System.out.println(SecurityContextHolder.getContext().getAuthentication().getCredentials().toString());
         chain.doFilter(servletRequest, servletResponse);
-    }
-    private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);}
-    public String extractUserRole(String token) {
-        return extractClaim(token, Claims::getIssuer);
-    }
-    public String extractUserId(String token) {
-        return extractClaim(token, Claims::getId);
-    }
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-
-        return claimsResolver.apply(claims);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 
 }

@@ -2,10 +2,7 @@ package com.pragma.square.domain.usecase;
 
 import com.pragma.square.domain.exception.DomainException;
 import com.pragma.square.domain.factory.OrderUseCaseFactory;
-import com.pragma.square.domain.models.ClientRequestModel;
-import com.pragma.square.domain.models.OrderModel;
-import com.pragma.square.domain.models.PlateModel;
-import com.pragma.square.domain.models.RestaurantModel;
+import com.pragma.square.domain.models.*;
 import com.pragma.square.domain.spi.IOrderPersistencePort;
 import org.aspectj.lang.annotation.Before;
 import org.hibernate.mapping.Any;
@@ -74,7 +71,9 @@ class OrderUseCaseTest {
         restaurantModel.setId(1L);
         plateModel.setId(1L);
         plateModel.setIdRestaurant(restaurantModel);
+        plateModel.setActive(true);
         plateModelList.add(plateModel);
+        PlateQuantityModel plateQuantityModel = new PlateQuantityModel();
 
 
         when(orderPersistencePort.orderExists())
@@ -85,6 +84,8 @@ class OrderUseCaseTest {
                 .thenReturn(restaurantModel);
         when(orderPersistencePort.create(any()))
                 .thenReturn(orderModel);
+        when(orderPersistencePort.createPlateQuantity(any(PlateQuantityModel.class)))
+                .thenReturn(plateQuantityModel);
         OrderModel result = orderUseCase.create(clientRequestModelList);
 
         //then

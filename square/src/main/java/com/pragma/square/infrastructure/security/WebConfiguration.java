@@ -1,5 +1,6 @@
 package com.pragma.square.infrastructure.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class WebConfiguration {
 
 
@@ -33,10 +35,12 @@ public class WebConfiguration {
 //        //return new UserInfoUserDetailsService();
 //    }
 
+    private final JwtService jwtService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         PreAuthenticatedUserRoleHeaderFilter authFilter
-                = new PreAuthenticatedUserRoleHeaderFilter();
+                = new PreAuthenticatedUserRoleHeaderFilter(jwtService);
         return http
                 .csrf().disable()
                 .sessionManagement()
@@ -48,7 +52,7 @@ public class WebConfiguration {
                 .requestMatchers("/square/restaurant/pagination").permitAll()
                 .requestMatchers("/square/plate/pagination/**").permitAll()
                 .requestMatchers("/square/users/**").permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic(Customizer.withDefaults())
                 .build();

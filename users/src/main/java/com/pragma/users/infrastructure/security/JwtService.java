@@ -108,6 +108,8 @@ public class JwtService {
     public String extractUserId(String token) {
         return extractClaim(token, Claims::getId);
     }
+
+    public String extractUsername(String token) { return extractClaim(token, Claims::getSubject);}
     public Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
