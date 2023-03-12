@@ -1,2 +1,6 @@
 keycloak-20.0.5/
-.idea/
+
+.idea
+*.iws
+*.iml
+*.ipr

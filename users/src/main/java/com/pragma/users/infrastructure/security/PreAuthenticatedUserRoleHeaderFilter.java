@@ -33,6 +33,8 @@ public class PreAuthenticatedUserRoleHeaderFilter
         extends GenericFilterBean {
 
 private final IUserRepository userRepository;
+
+private final JwtService jwtService;
     public void doFilter(ServletRequest servletRequest,
                          ServletResponse servletResponse,
                          FilterChain chain)
@@ -58,6 +60,7 @@ private final IUserRepository userRepository;
             return;
         }
 
+        jwtService.setToken(jwt);
 
         List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Roles);
         PreAuthenticatedAuthenticationToken authentication

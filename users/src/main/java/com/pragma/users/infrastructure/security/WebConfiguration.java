@@ -50,10 +50,12 @@ public class WebConfiguration {
 //    }
     private final IUserRepository userRepository;
 
+    private final JwtService jwtService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         PreAuthenticatedUserRoleHeaderFilter authFilter
-                = new PreAuthenticatedUserRoleHeaderFilter(userRepository);
+                = new PreAuthenticatedUserRoleHeaderFilter(userRepository,jwtService);
         return http
                 .csrf().disable()
                 .sessionManagement()

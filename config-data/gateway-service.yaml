@@ -26,5 +26,5 @@ spring:
           uri: lb://square-service
           predicates:
             - Path=/square/**
-#          filters:
-#            - AuthFilter
+          filters:
+            - AuthFilter

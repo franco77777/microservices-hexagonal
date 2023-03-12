@@ -27,6 +27,11 @@ public class JwtService {
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
 
 
+
+    private String token;
+
+
+
     public TokenDto registerToken(UserEntity userEntity){
         var jwtToken = generateToken(userEntity);
         return TokenDto.builder()
@@ -108,6 +113,14 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
 }
 
