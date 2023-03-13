@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.bouncycastle.math.ec.rfc8032.Ed25519.verify;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,6 +45,8 @@ class OrderUseCaseTest {
     IOrderPersistencePort orderPersistencePort;
     @InjectMocks
     OrderUseCase orderUseCase;
+
+    HttpClient http = HttpClient.newHttpClient();
 
 
 ////////////////////////////////<--- CREATE --->///////////////////////////////////////////
@@ -248,8 +252,9 @@ class OrderUseCaseTest {
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
         Long orderId = 1L;
-        String status = "preparing";
+        String status = "ready";
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        expected.setIdClient(1L);
 
         //when
         when(auth.getCredentials()).thenReturn("1");
@@ -260,10 +265,13 @@ class OrderUseCaseTest {
                 .thenReturn(expected);
         when(orderPersistencePort.updateOrder(any()))
                 .thenReturn(expected);
+        when(orderPersistencePort.findClientPhone(expected.getIdClient()))
+                .thenReturn("1234");
         OrderModel result = orderUseCase.updateStatus(orderId, status);
 
         //then
         assertEquals(expected, result);
+
     }
 
     @Test
@@ -376,7 +384,10 @@ class OrderUseCaseTest {
         //then
         assertThat(raisedException).isInstanceOf(DomainException.class)
                 .hasMessageContaining("The order must be ready to change it to delivered");
+
     }
+
+
 
 ////////////////////////////////<--- UPDATE TO DELIVERED --->///////////////////////////////////////////
 
@@ -409,42 +420,53 @@ class OrderUseCaseTest {
     @Test
     void deleteOrder() {
         //given
-        Long orderId = 1L;
+        Authentication auth = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
         expected.setStatus("pending");
         expected.setIdClient(1L);
+        expected.setId(1L);
 
 
         //when
-        when(orderPersistencePort.findOrderById(orderId))
+        when(auth.getCredentials()).thenReturn("1");
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findOrderByUserId(1L))
                 .thenReturn(expected);
         when(orderPersistencePort.findClientPhone(expected.getIdClient()))
                 .thenReturn("+1234567890");
-        orderUseCase.deleteOrder(orderId);
+        orderUseCase.deleteOrder();
 
         //then
-        Mockito.verify(orderPersistencePort, Mockito.times(1)).deleteOrder(orderId);;
+        Mockito.verify(orderPersistencePort, times(1)).deleteOrder(1L);
     }
 
     @Test
     void deleteOrderShouldThrowExceptionWhenStatusIsWrong(){
         //given
-        Long orderId = 1L;
+        Authentication auth = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
         expected.setStatus("preparing");
         expected.setIdClient(1L);
 
         //when
-        when(orderPersistencePort.findOrderById(orderId))
+        when(auth.getCredentials()).thenReturn("1");
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findOrderByUserId(1L))
                 .thenReturn(expected);
         when(orderPersistencePort.findClientPhone(expected.getIdClient()))
                 .thenReturn("+1234567890");
-        final Throwable raisedException = catchThrowable(() -> orderUseCase.deleteOrder(orderId));
+        final Throwable raisedException = catchThrowable(() -> orderUseCase.deleteOrder());
 
         //then
         assertThat(raisedException).isInstanceOf(DomainException.class)
                 .hasMessageContaining("The order has been taken, cannot be cancelled");
     }
+
+
 
 
 

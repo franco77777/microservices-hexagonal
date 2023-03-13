@@ -62,9 +62,9 @@ public class OrderController {
         OrderResponseDto orderResponseDto = orderHandler.updateToDelivered(orderId);
         return new ResponseEntity<>(orderResponseDto, HttpStatus.OK);
     }
-    @DeleteMapping("/{orderId}")
-    public ResponseEntity<String> delete(@PathVariable Long orderId){
-        orderHandler.deleteOrder(orderId);
+    @DeleteMapping()
+    public ResponseEntity<String> delete(){
+        orderHandler.deleteOrder();
         return new ResponseEntity<>("your order has been deleted", HttpStatus.OK);
     }
 

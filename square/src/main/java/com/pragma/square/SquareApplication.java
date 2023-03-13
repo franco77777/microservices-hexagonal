@@ -5,6 +5,8 @@ import com.whatsapp.api.domain.messages.*;
 import com.whatsapp.api.domain.messages.response.MessageResponse;
 import com.whatsapp.api.domain.messages.type.ButtonType;
 import com.whatsapp.api.domain.messages.type.InteractiveMessageType;
+import com.whatsapp.api.domain.templates.type.ComponentType;
+import com.whatsapp.api.domain.templates.type.LanguageType;
 import com.whatsapp.api.exception.utils.Formatter;
 import com.whatsapp.api.impl.WhatsappBusinessCloudApi;
 import org.springframework.boot.SpringApplication;
@@ -44,6 +46,26 @@ public class SquareApplication {
 //		}
 
 
+//		WhatsappApiFactory factory = WhatsappApiFactory.newInstance("EAADEmIApxS0BADBjfYAzLI1QsOGrH38aQSUSkmn8CTpgFyiypqyg9oLCOGVxki375IUlDYx23ikIEuBMm344AT64RtdppQv48Dm3vzZC7YZAUWhLWkUTlcrB1dbv8pS9kihYkfQggKQ9K1tuRtBv5AR3ShIZCkMnmZAFu18RA8pHsOMEZCDety3BrTVrGeTqJm3yufuy80gZDZD");
+//
+//		WhatsappBusinessCloudApi whatsappBusinessCloudApi = factory.newBusinessCloudApi();
+//
+//		var message = Message.MessageBuilder.builder()//
+//				.setTo("5493874692393")//
+//				.buildTemplateMessage(//
+//						new TemplateMessage()//
+//								.setLanguage(new Language(LanguageType.EN))//
+//								.setName("order_alert")//
+//								.addComponent(//
+//										new Component(ComponentType.BODY)//
+//												.addParameter(new TextParameter("423"))//
+//
+//
+//				));
+//
+//		MessageResponse messageResponse = whatsappBusinessCloudApi.sendMessage("108928785480520", message);
+//		System.out.println(messageResponse);
+//
 	}
 
 

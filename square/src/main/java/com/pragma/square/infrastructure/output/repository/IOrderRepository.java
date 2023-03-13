@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface IOrderRepository extends JpaRepository<OrderEntity,Long> {
     Boolean existsByIdClient(Long idClient);
    Optional<Page<OrderEntity>>findAllByIdRestaurant_IdAndStatus(Long idRestaurant, String status, PageRequest pageable);
+
+
+    Optional<OrderEntity> findByIdClient(Long userId);
 }

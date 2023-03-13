@@ -43,6 +43,24 @@ class RestaurantUseCaseTest {
         //given
         Assertions.assertEquals(restaurantModel, result);
     }
+
+     @Test
+     void saveRestaurantShouldThrowException() {
+         //given
+         RestaurantModel restaurantModel = new RestaurantModel();
+         restaurantModel.setUserId(1L);
+
+         //when
+         when(restaurantPersistencePort.getRoleUser(anyLong()))
+                 .thenReturn("false");
+         final Throwable raisedException = catchThrowable(() -> restaurantUseCase.saveRestaurant(restaurantModel));
+
+         //then
+         assertThat(raisedException).isInstanceOf(DomainException.class)
+                 .hasMessageContaining("the user id is not a owner");
+
+
+     }
     ////////////////////////////////<--- GET ALL RESTAURANTS --->///////////////////////////////////////////
     @Test
     void getAllRestaurants() {

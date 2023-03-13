@@ -29,4 +29,6 @@ public interface IOrderPersistencePort {
     void deleteOrder(Long orderId);
 
     PlateQuantityModel createPlateQuantity(PlateQuantityModel quantity);
+
+    OrderModel findOrderByUserId(Long userIdLogged);
 }

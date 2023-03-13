@@ -105,5 +105,11 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
         return plateQuantityEntityMapper.toModel(response);
     }
 
+    @Override
+    public OrderModel findOrderByUserId(Long userIdLogged) {
+        OrderEntity orderEntity = orderRepository.findByIdClient(userIdLogged).orElseThrow(()->new InfrastructureException("the current user no have orders", HttpStatus.NOT_FOUND));
+        return orderEntityMapper.toModel(orderEntity);
+    }
+
 
 }

@@ -44,8 +44,8 @@ public class OrderHandler implements IOrderHandler {
     }
 
     @Override
-    public void deleteOrder(Long orderId) {
-        orderServicePort.deleteOrder(orderId);
+    public void deleteOrder() {
+        orderServicePort.deleteOrder();
     }
 
 

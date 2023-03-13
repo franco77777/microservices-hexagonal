@@ -57,14 +57,12 @@ public class JwtService {
         String email = extractUserEmail(token);
         String role = extractUserRole(token);
         String userId = extractUserId(token);
-        Optional < UserEntity > userDatabase = userRepository.findByEmail(email);
-        if (userDatabase.isEmpty()) {
-            throw new InfrastructureException("Token: email " + email + " not found", HttpStatus.NOT_FOUND);
-        }
-        if (!userDatabase.get().getRoles().toString().equals(role)){
+        UserEntity userDatabase = userRepository.findByEmail(email).orElseThrow(() -> new InfrastructureException("Token: email " + email + " not found", HttpStatus.UNAUTHORIZED));;
+
+        if (!userDatabase.getRoles().toString().equals(role)){
             throw new InfrastructureException("Token: role is wrong", HttpStatus.NOT_FOUND);
         }
-        if (!userDatabase.get().getId().toString().equals(userId)){
+        if (!userDatabase.getId().toString().equals(userId)){
             throw new InfrastructureException("Token: userId is wrong", HttpStatus.NOT_FOUND);
         }
             return new TokenDto(token);

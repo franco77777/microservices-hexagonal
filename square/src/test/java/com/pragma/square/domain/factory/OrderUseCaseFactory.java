@@ -10,7 +10,7 @@ public class OrderUseCaseFactory {
         restaurantModel.setId(1L);
         OrderModel expected = new OrderModel();
         expected.setIdRestaurant(restaurantModel);
-        expected.setStatus("pending");
+        expected.setStatus("preparing");
         return expected;
     }
 

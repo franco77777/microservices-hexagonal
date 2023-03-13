@@ -15,5 +15,5 @@ public interface IOrderHandler {
 
     OrderResponseDto updateToDelivered(Long orderId);
 
-    void deleteOrder(Long orderId);
+    void deleteOrder();
 }

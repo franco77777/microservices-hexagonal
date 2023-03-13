@@ -17,5 +17,5 @@ public interface IOrderServicePort {
 
     OrderModel updateToDelivered(Long orderId);
 
-    void deleteOrder(Long orderId);
+    void deleteOrder();
 }

@@ -64,19 +64,17 @@ public class OrderUseCase implements IOrderServicePort {
     }
 
     @Override
-    public void deleteOrder(Long orderId) {
+    public void deleteOrder() {
         String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
         Long userIdLogged = Long.parseLong(currentUserId);
-        OrderModel order = orderPersistencePort.findOrderById(orderId);
-        Long userIdOfOrder = order.getIdClient();
-        if(!userIdOfOrder.equals(userIdLogged)) throw new DomainException("You can't delete this order",HttpStatus.UNAUTHORIZED);
-        String clientPhone = orderPersistencePort.findClientPhone(order.getIdClient());
+        OrderModel order = orderPersistencePort.findOrderByUserId(userIdLogged);
+        String clientPhone = orderPersistencePort.findClientPhone(userIdLogged);
         String phoneTransform = clientPhone.substring(1);
         if(!order.getStatus().equals("pending")){
             //sendMessageRequestFail(phoneTransform);
             throw new DomainException("The order has been taken, cannot be cancelled", HttpStatus.BAD_REQUEST);
         }
-        orderPersistencePort.deleteOrder(orderId);
+        orderPersistencePort.deleteOrder(order.getId());
     }
 
     public OrderModel currentEmployeeValidate(Long orderId,String status) {
