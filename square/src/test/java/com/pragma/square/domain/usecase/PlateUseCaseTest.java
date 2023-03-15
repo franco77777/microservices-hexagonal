@@ -40,13 +40,11 @@ class PlateUseCaseTest {
         restaurantModel.setUserId(1L);
         Long restaurantId = 1L;
         Long categoryId = 1L;
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
+
 
         //when
-        Mockito.when(auth.getCredentials()).thenReturn("1");
-        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(platePersistencePort.findCurrentUserId())
+                        .thenReturn("1");
         Mockito.when(platePersistencePort.getRestaurant(restaurantId))
                 .thenReturn(restaurantModel);
         Mockito.when(platePersistencePort.savePlate(expected,restaurantId,categoryId))
@@ -65,13 +63,10 @@ class PlateUseCaseTest {
         restaurantModel.setUserId(1L);
         Long restaurantId = 1L;
         Long categoryId = 1L;
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
 
         //when
-        Mockito.when(auth.getCredentials()).thenReturn("2");
-        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(platePersistencePort.findCurrentUserId())
+                .thenReturn("2");
         Mockito.when(platePersistencePort.getRestaurant(restaurantId))
                 .thenReturn(restaurantModel);
         final Throwable raisedException = catchThrowable(() -> plateUseCase.savePlate(expected,restaurantId,categoryId));
@@ -90,9 +85,6 @@ class PlateUseCaseTest {
         plateUpdate.setPrice("1000");
         plateUpdate.setDescription("description");
         Long plateId = 1L;
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
         RestaurantModel restaurantModel = new RestaurantModel();
         restaurantModel.setUserId(1L);
         PlateModel plateModel = new PlateModel();
@@ -100,8 +92,8 @@ class PlateUseCaseTest {
 
 
         //when
-        Mockito.when(auth.getCredentials()).thenReturn("1");
-        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(platePersistencePort.findCurrentUserId())
+                .thenReturn("1");
         Mockito.when(platePersistencePort.getPlate(plateId))
                 .thenReturn(plateModel);
         Mockito.when(platePersistencePort.updatePlate(Mockito.any(PlateModel.class)))
@@ -119,17 +111,14 @@ class PlateUseCaseTest {
         plateUpdate.setPrice("1000");
         plateUpdate.setDescription("description");
         Long plateId = 1L;
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
         RestaurantModel restaurantModel = new RestaurantModel();
         restaurantModel.setUserId(2L);
         PlateModel plateModel = new PlateModel();
         plateModel.setIdRestaurant(restaurantModel);
 
         //when
-        Mockito.when(auth.getCredentials()).thenReturn("1");
-        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(platePersistencePort.findCurrentUserId())
+                .thenReturn("1");
         Mockito.when(platePersistencePort.getPlate(plateId))
                 .thenReturn(plateModel);
         final Throwable raisedException = catchThrowable(() -> plateUseCase.UpdatePlate(plateUpdate,plateId));
@@ -145,17 +134,14 @@ class PlateUseCaseTest {
     void deactivatePlate() {
         //given
         Long plateId = 1L;
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
         RestaurantModel restaurantModel = new RestaurantModel();
         restaurantModel.setUserId(1L);
         PlateModel plateModel = new PlateModel();
         plateModel.setIdRestaurant(restaurantModel);
 
         //when
-        Mockito.when(auth.getCredentials()).thenReturn("1");
-        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(platePersistencePort.findCurrentUserId())
+                .thenReturn("1");
         Mockito.when(platePersistencePort.getPlate(plateId))
                 .thenReturn(plateModel);
         Mockito.when(platePersistencePort.updatePlate(Mockito.any(PlateModel.class)))
@@ -170,17 +156,14 @@ class PlateUseCaseTest {
     void deactivatePlateShouldThrowException() {
         //given
         Long plateId = 1L;
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
         RestaurantModel restaurantModel = new RestaurantModel();
         restaurantModel.setUserId(2L);
         PlateModel plateModel = new PlateModel();
         plateModel.setIdRestaurant(restaurantModel);
 
         //when
-        Mockito.when(auth.getCredentials()).thenReturn("1");
-        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        Mockito.when(platePersistencePort.findCurrentUserId())
+                .thenReturn("1");
         Mockito.when(platePersistencePort.getPlate(plateId))
                 .thenReturn(plateModel);
         final Throwable raisedException = catchThrowable(() -> plateUseCase.deactivatePlate(plateId));

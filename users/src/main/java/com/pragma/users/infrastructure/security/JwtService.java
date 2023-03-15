@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -38,9 +40,16 @@ public class JwtService {
                 .token(jwtToken)
                 .build();
     }
+
+
     public String generateToken(UserEntity userDetails) {
+       //ist<String>roles;
+        //  Map<String, Object> claims=new HashMap();
+       // claims.put("nombre","nombre");
+        //claims.put("roles",roles);
         return Jwts
                 .builder()
+                //.addClaims(claims)
                 .setId(userDetails.getId().toString())
                 .setIssuer(userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new)[0])
                 .setSubject(userDetails.getEmail())
@@ -89,7 +98,7 @@ public class JwtService {
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
-
+        //claims.get("email", String.class);
         return claimsResolver.apply(claims);
     }
 

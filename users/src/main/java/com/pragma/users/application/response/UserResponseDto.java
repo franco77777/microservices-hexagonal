@@ -17,7 +17,7 @@ public class UserResponseDto {
 
     private String email;
 
-    private AuthorityName roles;
+    private AuthorityNameResponseDto roles;
     private String dni;
 
 

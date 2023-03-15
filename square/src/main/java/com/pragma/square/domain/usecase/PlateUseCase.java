@@ -61,7 +61,7 @@ public class PlateUseCase implements IPlateServicePort {
 
 
     public boolean validateUserId(Long userId){
-        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString() ;
+        String currentUserId = platePersistencePort.findCurrentUserId();
         return !Objects.equals(Long.toString(userId), currentUserId);
     }
 }

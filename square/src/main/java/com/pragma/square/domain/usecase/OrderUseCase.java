@@ -6,14 +6,6 @@ import com.pragma.square.domain.models.*;
 import com.pragma.square.domain.spi.IOrderPersistencePort;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
 
 public class OrderUseCase implements IOrderServicePort {
@@ -26,14 +18,14 @@ public class OrderUseCase implements IOrderServicePort {
 
     @Override
     public OrderModel create(List<ClientRequestModel> requests) {
-        String idClient = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String currentUserId = orderPersistencePort.findCurrentUserId();
         Boolean orderAlreadyExists = orderPersistencePort.orderExists();
         if(orderAlreadyExists) throw new DomainException("Order already exists",HttpStatus.BAD_REQUEST);
         List<PlateModel> plates = platesForTheOrder(requests);
         List<PlateQuantityModel> quantity = platesQuantityForTheOrder(requests);
         RestaurantModel restaurant = orderPersistencePort.findRestaurantById(plates.get(0).getIdRestaurant().getId());
         OrderModel order = new OrderModel();
-        order.setIdClient(Long.parseLong(idClient));
+        order.setIdClient(Long.parseLong(currentUserId));
         order.setOrderDate(new Date());
         order.setStatus("pending");
         order.setPlates(plates);
@@ -44,7 +36,7 @@ public class OrderUseCase implements IOrderServicePort {
 
     @Override
     public Page<OrderModel> findByStatus(int page, int size, String sort, String status,String property) {
-        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String currentUserId = orderPersistencePort.findCurrentUserId();
         Long employeeId = Long.parseLong(currentUserId);
         if(!status.matches("pending|preparing|ready")) throw new DomainException("Invalid status, must be: pending|preparing|ready", HttpStatus.BAD_REQUEST);
         if(!property.matches("id|orderDate|idClient|idChef")) throw new DomainException("Invalid property, must be: id|orderDate|idClient|idChef", HttpStatus.BAD_REQUEST);
@@ -65,20 +57,22 @@ public class OrderUseCase implements IOrderServicePort {
 
     @Override
     public void deleteOrder() {
-        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String currentUserId = orderPersistencePort.findCurrentUserId();
         Long userIdLogged = Long.parseLong(currentUserId);
         OrderModel order = orderPersistencePort.findOrderByUserId(userIdLogged);
-        String clientPhone = orderPersistencePort.findClientPhone(userIdLogged);
-        String phoneTransform = clientPhone.substring(1);
+        ClientModel client = orderPersistencePort.findClient(userIdLogged);
+        String phoneTransform = client.getMobile().substring(1);
+        System.out.println("soy phone client");
+        System.out.println(phoneTransform);
         if(!order.getStatus().equals("pending")){
-            //sendMessageRequestFail(phoneTransform);
+            orderPersistencePort.sendMessageRequestFail(phoneTransform,client.getEmail());
             throw new DomainException("The order has been taken, cannot be cancelled", HttpStatus.BAD_REQUEST);
         }
         orderPersistencePort.deleteOrder(order.getId());
     }
 
     public OrderModel currentEmployeeValidate(Long orderId,String status) {
-        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String currentUserId = orderPersistencePort.findCurrentUserId();
         Long employeeId = Long.parseLong(currentUserId);
         Long restaurantIdOfEmployee = orderPersistencePort.findEmployee(employeeId);
         OrderModel order = orderPersistencePort.findOrderById(orderId);
@@ -96,11 +90,17 @@ public class OrderUseCase implements IOrderServicePort {
             throw new DomainException("The order must be ready to change it to delivered", HttpStatus.BAD_REQUEST);
         }
         if(status.equals("ready")) {
-            String clientPhone = orderPersistencePort.findClientPhone(order.getIdClient());
-            String phoneTransform = clientPhone.substring(1);
-            System.out.println("soy number");
-            System.out.println(clientPhone);
-            //sendMessageReady(phoneTransform,order.getId());
+            try{
+                ClientModel client = orderPersistencePort.findClient(order.getIdClient());
+                String phoneTransform = client.getMobile().substring(1);
+                System.out.println("im client ready");
+                System.out.println(client);
+                orderPersistencePort.sendMessageReady(phoneTransform,order.getId());
+
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+
         }
         order.setStatus(status);
         order.setIdChef(employeeId);
@@ -109,42 +109,6 @@ public class OrderUseCase implements IOrderServicePort {
 
 
 
-    public void sendMessageReady(String number,Long idOrder) {
-        if(number.equals("7777777")) {return;}
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://graph.facebook.com/v16.0/108928785480520/messages"))
-                    .header("Authorization", "Bearer EAADEmIApxS0BAI23iSUA8hKqi0NXv58UniJSErM8G0l65CkKbUDlmqoHOOHr8DJssQMb5loPEklk2nabrZApz1TO8ZBrW9zJsOllpNGocYAmyZC0T5xfBslajfn0JZCKzaDO0noZBAc6cXDBfubYqMDjOiV26EaxRvAkxZBZCEQ5kPLEQWfSdUAu9JZCA6evvXqYzRBnIDrPsQZDZD")
-                    .header("Content-Type", "application/json")
-                    //.POST(HttpRequest.BodyPublishers.ofString("{ \"messaging_product\": \"whatsapp\", \"recipient_type\": \"individual\", \"to\": \""+number+"\", \"type\": \"template\", \"template\": { \"name\": \"hello_world\", \"language\": { \"code\": \"en_US\" } } }"))
-                    .POST(HttpRequest.BodyPublishers.ofString("{ \"messaging_product\": \"whatsapp\", \"recipient_type\": \"individual\", \"to\": \""+number+"\", \"type\": \"text\", \"text\": { \"preview_url\": false, \"body\": \"Hi, your order: "+idOrder+" is ready\" } }"))
-                    .build();
-            HttpClient http = HttpClient.newHttpClient();
-            HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    public void sendMessageRequestFail(String number) {
-        if(number.equals("7777777")) {return;}
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://graph.facebook.com/v16.0/108928785480520/messages"))
-                    .header("Authorization", "Bearer EAADEmIApxS0BAI23iSUA8hKqi0NXv58UniJSErM8G0l65CkKbUDlmqoHOOHr8DJssQMb5loPEklk2nabrZApz1TO8ZBrW9zJsOllpNGocYAmyZC0T5xfBslajfn0JZCKzaDO0noZBAc6cXDBfubYqMDjOiV26EaxRvAkxZBZCEQ5kPLEQWfSdUAu9JZCA6evvXqYzRBnIDrPsQZDZD")
-                    .header("Content-Type", "application/json")
-                    //.POST(HttpRequest.BodyPublishers.ofString("{ \"messaging_product\": \"whatsapp\", \"recipient_type\": \"individual\", \"to\": \""+number+"\", \"type\": \"template\", \"template\": { \"name\": \"hello_world\", \"language\": { \"code\": \"en_US\" } } }"))
-                    .POST(HttpRequest.BodyPublishers.ofString("{ \"messaging_product\": \"whatsapp\", \"recipient_type\": \"individual\", \"to\": \""+number+"\", \"type\": \"text\", \"text\": { \"preview_url\": false, \"body\": \"Sorry, your order is already in preparation and cannot be cancelled\" } }"))
-                    .build();
-            HttpClient http = HttpClient.newHttpClient();
-            HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     private List<PlateModel> platesForTheOrder(List<ClientRequestModel> requests) {
         List<PlateModel> plates = new ArrayList<>();
@@ -155,7 +119,6 @@ public class OrderUseCase implements IOrderServicePort {
             PlateModel plateFound = orderPersistencePort.findPlateById(order.getPlateId());
             if(plateFound.getActive().equals(false)) throw new DomainException("plate id: "+plateFound.getId()+" is not active", HttpStatus.BAD_REQUEST);
             restaurantId.add(plateFound.getIdRestaurant().getId());
-            //plateFound.setQuantity(order.getQuantity());
             plates.add(plateFound);
         }
         if(restaurantId.size()>1)throw new DomainException("Dishes must be from a single restaurant", HttpStatus.BAD_REQUEST);
@@ -173,6 +136,4 @@ public class OrderUseCase implements IOrderServicePort {
         }
         return platesQuantity;
     }
-
-
 }

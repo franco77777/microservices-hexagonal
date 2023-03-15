@@ -1,5 +1,7 @@
 package com.pragma.users.infrastructure.input;
 
+import com.pragma.users.application.handler.IUserHandler;
+import com.pragma.users.application.response.UserResponseDto;
 import com.pragma.users.infrastructure.output.entity.UserEntity;
 import com.pragma.users.infrastructure.output.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,29 +12,28 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/user/square")
-
 @RequiredArgsConstructor
 public class SquareController {
     private final IUserRepository userRepository;
 
+    private final IUserHandler userHandler;
+
     @GetMapping("/{userId}")
-    public ResponseEntity<String> getUserPhone(@PathVariable Long userId) {
-        String phone = userRepository.findById(userId).get().getMobile();
-            return ResponseEntity.ok(phone);
+    public ResponseEntity<UserResponseDto> getUserPhone(@PathVariable Long userId) {
+        UserResponseDto userResponse = userHandler.getUser(userId);
+        return ResponseEntity.ok(userResponse);
     }
 
     @GetMapping("/role/{userId}")
     public ResponseEntity<String> getRole(@PathVariable Long userId) {
             String result;
-            Optional<UserEntity> user = userRepository.findById(userId);
-            if(user.get().getRoles().toString().contains("ROLE_OWNER")) {
+            UserResponseDto user = userHandler.getUser(userId);
+            if(user.getRoles().toString().contains("ROLE_OWNER")) {
                 result = "true";
             }
             else{
                 result = "false";
             }
         return ResponseEntity.ok(result);
-
     }
-
 }

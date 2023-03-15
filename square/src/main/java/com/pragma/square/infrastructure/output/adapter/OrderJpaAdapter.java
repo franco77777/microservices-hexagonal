@@ -10,6 +10,12 @@ import com.pragma.square.infrastructure.output.mapper.IPlateQuantityEntityMapper
 import com.pragma.square.infrastructure.output.mapper.IRestaurantEntityMapper;
 import com.pragma.square.infrastructure.output.repository.*;
 import com.pragma.square.infrastructure.utils.UserService;
+import com.whatsapp.api.WhatsappApiFactory;
+import com.whatsapp.api.domain.messages.*;
+import com.whatsapp.api.domain.messages.response.MessageResponse;
+import com.whatsapp.api.domain.templates.type.ComponentType;
+import com.whatsapp.api.domain.templates.type.LanguageType;
+import com.whatsapp.api.impl.WhatsappBusinessCloudApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -89,8 +95,8 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     }
 
     @Override
-    public String findClientPhone(Long orderClientId) {
-        return userService.getClientPhone(orderClientId);
+    public ClientModel findClient(Long orderClientId) {
+        return userService.getClient(orderClientId);
     }
 
     @Override
@@ -109,6 +115,62 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     public OrderModel findOrderByUserId(Long userIdLogged) {
         OrderEntity orderEntity = orderRepository.findByIdClient(userIdLogged).orElseThrow(()->new InfrastructureException("the current user no have orders", HttpStatus.NOT_FOUND));
         return orderEntityMapper.toModel(orderEntity);
+    }
+
+    @Override
+    public String findCurrentUserId() {
+        return SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+    }
+
+    @Override
+    public void sendMessageReady(String clientPhone, Long id) {
+        if(clientPhone.equals("7777777") )return;
+        try{
+            WhatsappApiFactory factory = WhatsappApiFactory.newInstance();
+            WhatsappBusinessCloudApi whatsappBusinessCloudApi = factory.newBusinessCloudApi();
+            var message = Message.MessageBuilder.builder()
+                    .setTo(clientPhone)
+                    .buildTemplateMessage(
+                            new TemplateMessage()
+                                    .setLanguage(new Language(LanguageType.EN))
+                                    .setName("order_alert")
+                                    .addComponent(
+                                            new Component(ComponentType.BODY)
+                                                    .addParameter(new TextParameter(Long.toString(id)))
+                                    ));
+            MessageResponse messageResponse = whatsappBusinessCloudApi.sendMessage("108928785480520", message);
+            System.out.println(messageResponse);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+
+    }
+
+    @Override
+    public void sendMessageRequestFail(String clientPhone,String email) {
+        if(clientPhone.equals("7777777") )return;
+        try{
+            WhatsappApiFactory factory = WhatsappApiFactory.newInstance();
+            WhatsappBusinessCloudApi whatsappBusinessCloudApi = factory.newBusinessCloudApi();
+            var message = Message.MessageBuilder.builder()
+                    .setTo(clientPhone)
+                    .buildTemplateMessage(
+                            new TemplateMessage()
+                                    .setLanguage(new Language(LanguageType.EN))
+                                    .setName("order_cancelled2")
+                                    .addComponent(
+                                            new Component(ComponentType.BODY)
+                                                    .addParameter(new TextParameter(email))
+                                    ));
+            MessageResponse messageResponse = whatsappBusinessCloudApi.sendMessage("108928785480520", message);
+            System.out.println(messageResponse);
+        }catch (Exception e){
+
+            System.out.println(e.getMessage());
+
+        }
+
     }
 
 

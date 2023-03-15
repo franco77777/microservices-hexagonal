@@ -1,8 +1,9 @@
 package com.pragma.users.domain.usecase;
 
+import com.pragma.users.domain.model.AuthorityNameModel;
+import com.pragma.users.domain.model.TokenModel;
 import com.pragma.users.domain.model.UserModel;
 import com.pragma.users.domain.spi.IUserPersistencePort;
-import com.pragma.users.infrastructure.output.utils.AuthorityName;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,19 +12,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+
 
 @ExtendWith(MockitoExtension.class)
 class UserUseCaseTest {
-    @Mock
-    private PasswordEncoder passwordEncoder;
+
+
     @Mock
     private IUserPersistencePort userPersistencePort;
     @InjectMocks
@@ -34,30 +31,28 @@ class UserUseCaseTest {
 
     }
 
-
+/////////////////////////////////// <--- SAVE USER ---> /////////////////////////////////////////////
     @Test
-    void saveUser() {
+    void saveUserShouldReturnUserModel() {
         //given
-        UserModel esperado = new UserModel();
-        esperado.setId(1L);
-        esperado.setEmail("kenaa@example.com");
-        esperado.setRoles(AuthorityName.ROLE_EMPLOYEE);
-        esperado.setMobile("+5493874692393");
-        UserModel parametroUser = new UserModel();
-        parametroUser.setEmail("kenaa@example.com");
+        UserModel user = new UserModel();
+        user.setEmail("kenaa@example.com");
+        TokenModel token = new TokenModel();
+        token.setToken("123456");
 
         //when
-        Mockito.when(userPersistencePort.saveUser(parametroUser))
-                .thenReturn(esperado);
-        final UserModel resultado = userUseCase.saveUser(parametroUser,AuthorityName.ROLE_EMPLOYEE);
+        Mockito.when(userPersistencePort.saveUser(user))
+                .thenReturn(token);
+         TokenModel result = userUseCase.saveUser(user,AuthorityNameModel.ROLE_EMPLOYEE);
 
         //then
-        Assertions.assertEquals(esperado,resultado);
+        Assertions.assertEquals(token,result);
     }
 
+    /////////////////////////////////// <--- GET ALL USERS ---> /////////////////////////////////////////////
     @Test
 
-    void getAllUsers() {
+    void getAllUsersShouldReturnListOfUserModel() {
         //given
         List<UserModel> esperado = new ArrayList<>();
 
@@ -70,9 +65,9 @@ class UserUseCaseTest {
         Assertions.assertEquals(esperado,resultado);
         Mockito.verify(userPersistencePort,Mockito.times(1)).getAllUsers();
     }
-
+    /////////////////////////////////// <--- EMAIL EXISTS ---> /////////////////////////////////////////////
     @Test
-    void emailExists() {
+    void emailExistsShouldReturnBoolean() {
         //given
         Boolean esperado = true;
 
@@ -85,24 +80,23 @@ class UserUseCaseTest {
         Assertions.assertEquals(esperado,resultado);
     }
 
-    @Test
-    void ShouldGivenUser() {
+    /////////////////////////////////// <--- USER EXISTS ---> /////////////////////////////////////////////
 
+    @Test
+    void userLoginShouldReturnTokenModel() {
         //given
-        Authentication authentication = Mockito.mock(Authentication.class);
-        UserModel esperado = new UserModel();
-        esperado.setEmail("kenaa@example.com");
-        esperado.setPassword(passwordEncoder.encode("password"));
+        String email = "kenaa@example.com";
+        String password = "password";
+       TokenModel expected = new TokenModel();
+       expected.setToken("token");
 
         //when
-        Mockito.when(userPersistencePort.userExists("kenaa@example.com"))
-                .thenReturn(esperado);
-        Mockito.when(passwordEncoder.matches("password",esperado.getPassword()))
-                .thenReturn(true);
-        UserModel resultado = userUseCase.userExists("kenaa@example.com","password");
+        Mockito.when(userPersistencePort.userLogin(email,password))
+                .thenReturn(expected);
+        TokenModel result = userUseCase.userLogin("kenaa@example.com","password");
 
         //then
-        Assertions.assertEquals(esperado,resultado);
+        Assertions.assertEquals(expected,result);
 
     }
 

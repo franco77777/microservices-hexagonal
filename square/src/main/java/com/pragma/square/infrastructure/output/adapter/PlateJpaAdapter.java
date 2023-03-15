@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RequiredArgsConstructor
 public class PlateJpaAdapter implements IPlatePersistencePort {
@@ -64,6 +66,12 @@ private final ICategoryRepository categoryRepository;
             result = plateRepository.findAllByIdCategory_IdAndIdRestaurant_Id( categoryId,restaurantId, PageRequest.of(page, size).withSort(Sort.by(Sort.Direction.DESC,property))).orElseThrow(()-> new InfrastructureException("Plates not found", HttpStatus.NOT_FOUND));
         }
         return result.map(plateEntityMapper::toPlateModel);
+    }
+
+    @Override
+    public String findCurrentUserId() {
+        String securityCredentials = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        return securityCredentials;
     }
 
 }

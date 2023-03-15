@@ -1,9 +1,6 @@
 package com.pragma.square.domain.spi;
 
-import com.pragma.square.domain.models.OrderModel;
-import com.pragma.square.domain.models.PlateModel;
-import com.pragma.square.domain.models.PlateQuantityModel;
-import com.pragma.square.domain.models.RestaurantModel;
+import com.pragma.square.domain.models.*;
 import org.springframework.data.domain.Page;
 
 public interface IOrderPersistencePort {
@@ -23,7 +20,7 @@ public interface IOrderPersistencePort {
 
     OrderModel updateOrder(OrderModel order);
 
-    String findClientPhone(Long orderClientId);
+    ClientModel findClient(Long orderClientId);
 
 
     void deleteOrder(Long orderId);
@@ -31,4 +28,10 @@ public interface IOrderPersistencePort {
     PlateQuantityModel createPlateQuantity(PlateQuantityModel quantity);
 
     OrderModel findOrderByUserId(Long userIdLogged);
+
+    String findCurrentUserId();
+
+    void sendMessageReady(String phoneTransform, Long id);
+
+    void sendMessageRequestFail(String phoneTransform,String email);
 }

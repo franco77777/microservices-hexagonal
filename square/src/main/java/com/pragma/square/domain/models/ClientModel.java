@@ -1,7 +1,6 @@
-package com.pragma.users.domain.model;
+package com.pragma.square.domain.models;
 
-
-public class UserModel {
+public class ClientModel {
     private Long id;
     private String firstname;
     private String lastname;
@@ -11,15 +10,13 @@ public class UserModel {
     private String password;
 
     private String email;
-    private AuthorityNameModel roles;
+    private String roles;
     private String dni;
 
-
-
-    public UserModel() {
+    public ClientModel() {
     }
 
-    public UserModel(Long id, String firstname, String lastname, String mobile, String password, String email, AuthorityNameModel roles, String dni) {
+    public ClientModel(Long id, String firstname, String lastname, String mobile, String password, String email, String roles, String dni) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -28,10 +25,7 @@ public class UserModel {
         this.email = email;
         this.roles = roles;
         this.dni = dni;
-
     }
-
-
 
     public Long getId() {
         return id;
@@ -81,11 +75,11 @@ public class UserModel {
         this.email = email;
     }
 
-    public AuthorityNameModel getRoles() {
+    public String getRoles() {
         return roles;
     }
 
-    public void setRoles(AuthorityNameModel roles) {
+    public void setRoles(String roles) {
         this.roles = roles;
     }
 

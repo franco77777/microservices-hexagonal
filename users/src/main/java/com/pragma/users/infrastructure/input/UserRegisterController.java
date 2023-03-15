@@ -2,6 +2,7 @@ package com.pragma.users.infrastructure.input;
 import com.pragma.users.application.handler.IUserHandler;
 import com.pragma.users.application.mapper.IUserRequestMapper;
 import com.pragma.users.application.request.UserRequestDto;
+import com.pragma.users.application.response.TokenResponseDto;
 import com.pragma.users.application.response.UserResponseDto;
 import com.pragma.users.infrastructure.output.entity.TokenDto;
 import com.pragma.users.infrastructure.output.utils.AuthorityName;
@@ -28,48 +29,46 @@ public class UserRegisterController {
     private final IUserRequestMapper objectRequestMapper;
     private final SquareService squareService;
 
-    private final JwtService jwtService;
 
 
 
-    @GetMapping("/all")
-    public ResponseEntity<List<UserResponseDto>> getAllUsers(){
 
-        System.out.println("soy security");
-        System.out.println(SecurityContextHolder.getContext());
-        return ResponseEntity.ok(objectHandler.getAllUsers());
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity<List<UserResponseDto>> getAllUsers(){
+//
+//        System.out.println("soy security");
+//        System.out.println(SecurityContextHolder.getContext());
+//        return ResponseEntity.ok(objectHandler.getAllUsers());
+//    }
 
     @PostMapping("/client")
-    public ResponseEntity<TokenDto> saveClient(@RequestBody @Valid UserRequestDto userRequestDto){
-        UserResponseDto responseDto =objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_CLIENT);
-        TokenDto token = jwtService.registerToken(objectRequestMapper.toUserEntity(responseDto));
+    public ResponseEntity<TokenResponseDto> saveClient(@RequestBody @Valid  UserRequestDto userRequestDto){
+        TokenResponseDto TokenResponseDto =objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_CLIENT);
 
-        return new ResponseEntity<>(token, HttpStatus.CREATED);
+        return new ResponseEntity<>(TokenResponseDto, HttpStatus.CREATED);
     }
     //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
-    public ResponseEntity<TokenDto> saveAdmin(@RequestBody @Valid UserRequestDto userRequestDto){
-        UserResponseDto responseDto = objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_ADMIN);
-        TokenDto token = jwtService.registerToken(objectRequestMapper.toUserEntity(responseDto));
-        return new ResponseEntity<>(token, HttpStatus.CREATED);
+    public ResponseEntity<TokenResponseDto> saveAdmin(@RequestBody @Valid UserRequestDto userRequestDto){
+        TokenResponseDto Token =objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_ADMIN);
+        return new ResponseEntity<>(Token, HttpStatus.CREATED);
     }
 
    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/owner")
     public ResponseEntity<UserResponseDto> saveOwner(@RequestBody @Valid UserRequestDto userRequestDto){
-        UserResponseDto responseDto = objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_OWNER);
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+       UserResponseDto userResponseDto =objectHandler.saveOwner(userRequestDto, AuthorityName.ROLE_OWNER);
+        return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
     }
 
    @PreAuthorize("hasRole('OWNER')")
    @PostMapping("/employee/{restaurantId}")
     public ResponseEntity<String> saveEmployer(@RequestBody @Valid UserRequestDto userRequestDto, @PathVariable("restaurantId") Long restaurantId){
-        UserResponseDto responseDto = objectHandler.saveUser(userRequestDto, AuthorityName.ROLE_EMPLOYEE);
+       UserResponseDto responseDto =objectHandler.saveOwner(userRequestDto, AuthorityName.ROLE_EMPLOYEE);
         Long userId = responseDto.getId();
        try {
            String OwnerId = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
-           Boolean squareResponse = squareService.createRestaurantEmployee(Long.parseLong(OwnerId),restaurantId,responseDto.getId());
+           squareService.createRestaurantEmployee(Long.parseLong(OwnerId),restaurantId,responseDto.getId());
            return new ResponseEntity<>("employee: " + responseDto.getEmail() + " created", HttpStatus.CREATED);
        } catch (Exception e) {
            objectHandler.deleteUser(userId);

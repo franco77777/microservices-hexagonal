@@ -44,9 +44,8 @@ public class SquareApplication {
 //		} catch (URISyntaxException | IOException | InterruptedException e) {
 //			e.printStackTrace();
 //		}
-
-
-//		WhatsappApiFactory factory = WhatsappApiFactory.newInstance("EAADEmIApxS0BADBjfYAzLI1QsOGrH38aQSUSkmn8CTpgFyiypqyg9oLCOGVxki375IUlDYx23ikIEuBMm344AT64RtdppQv48Dm3vzZC7YZAUWhLWkUTlcrB1dbv8pS9kihYkfQggKQ9K1tuRtBv5AR3ShIZCkMnmZAFu18RA8pHsOMEZCDety3BrTVrGeTqJm3yufuy80gZDZD");
+//    try{
+//		WhatsappApiFactory factory = WhatsappApiFactory.newInstance();
 //
 //		WhatsappBusinessCloudApi whatsappBusinessCloudApi = factory.newBusinessCloudApi();
 //
@@ -55,18 +54,23 @@ public class SquareApplication {
 //				.buildTemplateMessage(//
 //						new TemplateMessage()//
 //								.setLanguage(new Language(LanguageType.EN))//
-//								.setName("order_alert")//
+//								.setName("order_client3")//
 //								.addComponent(//
 //										new Component(ComponentType.BODY)//
-//												.addParameter(new TextParameter("423"))//
+//												.addParameter(new TextParameter("francoaresis@gmail.com"))
+//												.addParameter(new TextParameter("123"))
 //
 //
-//				));
+//								));
 //
 //		MessageResponse messageResponse = whatsappBusinessCloudApi.sendMessage("108928785480520", message);
 //		System.out.println(messageResponse);
 //
-	}
+//	} catch (Exception e) {
+//		System.out.println(e.getMessage());
+//	}
+
+			}
 
 
 		}

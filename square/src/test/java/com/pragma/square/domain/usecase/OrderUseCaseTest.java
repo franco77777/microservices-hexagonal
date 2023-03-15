@@ -4,27 +4,15 @@ import com.pragma.square.domain.exception.DomainException;
 import com.pragma.square.domain.factory.OrderUseCaseFactory;
 import com.pragma.square.domain.models.*;
 import com.pragma.square.domain.spi.IOrderPersistencePort;
-import org.aspectj.lang.annotation.Before;
-import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,18 +34,17 @@ class OrderUseCaseTest {
     @InjectMocks
     OrderUseCase orderUseCase;
 
-    HttpClient http = HttpClient.newHttpClient();
+  //  Authentication auth = Mockito.mock(Authentication.class);
+//    SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+//        SecurityContextHolder.setContext(securityContext);
+//    when(securityContext.getAuthentication()).thenReturn(auth);
+//    when(auth.getCredentials()).thenReturn("1");
 
 
 ////////////////////////////////<--- CREATE --->///////////////////////////////////////////
     @Test
     void shouldCreateOrder() {
         //given
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(auth);
-        SecurityContextHolder.setContext(securityContext);
-        when(auth.getCredentials()).thenReturn("1");
         List<ClientRequestModel> clientRequestModelList = new ArrayList<>();
         ClientRequestModel clientRequestModel = new ClientRequestModel();
         clientRequestModel.setPlateId(1L);
@@ -79,7 +66,9 @@ class OrderUseCaseTest {
         plateModelList.add(plateModel);
         PlateQuantityModel plateQuantityModel = new PlateQuantityModel();
 
-
+       //when
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.orderExists())
                 .thenReturn(false);
         when(orderPersistencePort.findPlateById(anyLong()))
@@ -99,12 +88,10 @@ class OrderUseCaseTest {
     @Test
     void createShouldThrowExceptionIfOrderAlreadyExistsIsFalse(){
         //given
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(auth);
-        SecurityContextHolder.setContext(securityContext);
-        when(auth.getCredentials()).thenReturn("1");
+
         //when
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.orderExists())
                 .thenReturn(true);
         //then
@@ -116,11 +103,7 @@ class OrderUseCaseTest {
     @Test
     void createShouldThrowExceptionIfPlateIdNotExist(){
         //given
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(auth);
-        SecurityContextHolder.setContext(securityContext);
-        when(auth.getCredentials()).thenReturn("1");
+
         List<ClientRequestModel> clientRequestModelList = new ArrayList<>();
         ClientRequestModel clientRequestModel = new ClientRequestModel();
         clientRequestModel.setPlateId(null);
@@ -128,6 +111,8 @@ class OrderUseCaseTest {
         clientRequestModelList.add(clientRequestModel);
 
         //when
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.orderExists())
                 .thenReturn(false);
         //then
@@ -138,9 +123,6 @@ class OrderUseCaseTest {
 @Test
     void createShouldThrowExceptionIfQuantityNotExist(){
         //given
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
         List<ClientRequestModel> clientRequestModelList = new ArrayList<>();
         ClientRequestModel clientRequestModel = new ClientRequestModel();
         clientRequestModel.setPlateId(1L);
@@ -148,10 +130,11 @@ class OrderUseCaseTest {
         clientRequestModelList.add(clientRequestModel);
 
         //when
+        when(orderPersistencePort.findCurrentUserId())
+            .thenReturn("1");
         when(orderPersistencePort.orderExists())
                 .thenReturn(false);
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+
         //then
         Assertions.assertThrows(DomainException.class, () -> {
             orderUseCase.create(clientRequestModelList);
@@ -171,13 +154,11 @@ class OrderUseCaseTest {
         String property = "id";
         Long restaurantId = 1L;
         Page<OrderModel> expected =  new PageImpl<>(new ArrayList<>());
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
+
 
         //when
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.findEmployee(anyLong()))
                 .thenReturn(restaurantId);
         when(orderPersistencePort.findByStatus(restaurantId,page, size, sort, status, property))
@@ -200,6 +181,8 @@ class OrderUseCaseTest {
         String property = "id";
 
         //when
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         final Throwable raisedException = catchThrowable(() -> orderUseCase.findByStatus(page, size, sort, status, property));
 
         //then
@@ -217,6 +200,8 @@ class OrderUseCaseTest {
         String property = "idSort";
 
         //when
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         final Throwable raisedException = catchThrowable(() -> orderUseCase.findByStatus(page, size, sort, status, property));
 
         //then
@@ -235,6 +220,8 @@ class OrderUseCaseTest {
         String property = "id";
 
         //when
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         final Throwable raisedException = catchThrowable(() -> orderUseCase.findByStatus(page, size, sort, status, property));
 
         //then
@@ -248,29 +235,29 @@ class OrderUseCaseTest {
     @Test
     void updateStatusShouldChangeStatus() {
         //given
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
         Long orderId = 1L;
         String status = "ready";
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        expected.setId(1L);
         expected.setIdClient(1L);
 
         //when
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.findEmployee(anyLong()))
                 .thenReturn(1L);
         when(orderPersistencePort.findOrderById(orderId))
                 .thenReturn(expected);
         when(orderPersistencePort.updateOrder(any()))
                 .thenReturn(expected);
-        when(orderPersistencePort.findClientPhone(expected.getIdClient()))
-                .thenReturn("1234");
+        when(orderPersistencePort.findClient(expected.getIdClient()))
+                .thenReturn("+1234");
         OrderModel result = orderUseCase.updateStatus(orderId, status);
 
         //then
         assertEquals(expected, result);
+        Mockito.verify(orderPersistencePort, times(1)).sendMessageReady("1234",1L);
+
 
     }
 
@@ -294,13 +281,10 @@ class OrderUseCaseTest {
         Long orderId = 1L;
         String status = "preparing";
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
 
         //when
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.findEmployee(anyLong()))
                 .thenReturn(2L);
         when(orderPersistencePort.findOrderById(orderId))
@@ -318,13 +302,10 @@ class OrderUseCaseTest {
         String status = "preparing";
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
         expected.setStatus("preparing");
-    Authentication auth = Mockito.mock(Authentication.class);
-    SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-    SecurityContextHolder.setContext(securityContext);
 
         //when
-    when(auth.getCredentials()).thenReturn("1");
-    when(securityContext.getAuthentication()).thenReturn(auth);
+    when(orderPersistencePort.findCurrentUserId())
+            .thenReturn("1");
         when(orderPersistencePort.findEmployee(anyLong()))
                 .thenReturn(1L);
         when(orderPersistencePort.findOrderById(orderId))
@@ -343,13 +324,10 @@ class OrderUseCaseTest {
         String status = "ready";
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
         expected.setStatus("pending");
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
 
         //when
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.findEmployee(anyLong()))
                 .thenReturn(1L);
         when(orderPersistencePort.findOrderById(orderId))
@@ -368,13 +346,10 @@ class OrderUseCaseTest {
         String status = "delivered";
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
         expected.setStatus("preparing");
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
 
         //when
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.findEmployee(anyLong()))
                 .thenReturn(1L);
         when(orderPersistencePort.findOrderById(orderId))
@@ -397,13 +372,11 @@ class OrderUseCaseTest {
         Long orderId = 1L;
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
         expected.setStatus("ready");
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
+        expected.setIdClient(1L);
 
         //then
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.findEmployee(anyLong()))
                 .thenReturn(1L);
         when(orderPersistencePort.findOrderById(orderId))
@@ -415,14 +388,12 @@ class OrderUseCaseTest {
         //then
         assertEquals(expected, result);
 
+
     }
     ////////////////////////////////<--- DELETE ORDER --->///////////////////////////////////////////
     @Test
-    void deleteOrder() {
+    void ShouldDeleteOrder() {
         //given
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
         expected.setStatus("pending");
         expected.setIdClient(1L);
@@ -430,40 +401,39 @@ class OrderUseCaseTest {
 
 
         //when
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.findOrderByUserId(1L))
                 .thenReturn(expected);
-        when(orderPersistencePort.findClientPhone(expected.getIdClient()))
+        when(orderPersistencePort.findClient(expected.getIdClient()))
                 .thenReturn("+1234567890");
         orderUseCase.deleteOrder();
 
         //then
         Mockito.verify(orderPersistencePort, times(1)).deleteOrder(1L);
+
     }
 
     @Test
     void deleteOrderShouldThrowExceptionWhenStatusIsWrong(){
         //given
-        Authentication auth = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
         OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
         expected.setStatus("preparing");
         expected.setIdClient(1L);
 
         //when
-        when(auth.getCredentials()).thenReturn("1");
-        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(orderPersistencePort.findCurrentUserId())
+                .thenReturn("1");
         when(orderPersistencePort.findOrderByUserId(1L))
                 .thenReturn(expected);
-        when(orderPersistencePort.findClientPhone(expected.getIdClient()))
+        when(orderPersistencePort.findClient(expected.getIdClient()))
                 .thenReturn("+1234567890");
         final Throwable raisedException = catchThrowable(() -> orderUseCase.deleteOrder());
 
         //then
         assertThat(raisedException).isInstanceOf(DomainException.class)
                 .hasMessageContaining("The order has been taken, cannot be cancelled");
+        Mockito.verify(orderPersistencePort, times(1)).sendMessageRequestFail("1234567890");
     }
 
 

@@ -1,17 +1,24 @@
 package com.pragma.users.domain.spi;
 
 
+import com.pragma.users.domain.model.AuthorityNameModel;
+import com.pragma.users.domain.model.TokenModel;
 import com.pragma.users.domain.model.UserModel;
-import com.pragma.users.infrastructure.output.utils.AuthorityName;
 
 import java.util.List;
 
 public interface IUserPersistencePort {
-    UserModel saveUser(UserModel userModel);
+    TokenModel saveUser(UserModel userModel);
     List<UserModel> getAllUsers();
     boolean emailExists(String email);
 
-    UserModel userExists(String email);
+    TokenModel userLogin(String email, String password);
 
     void deleteUser(Long id);
+
+    UserModel getUser(Long userId);
+
+    TokenModel validateToken(String token);
+
+    UserModel saveOwner(UserModel userModel);
 }

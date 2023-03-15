@@ -12,4 +12,6 @@ public interface IPlatePersistencePort {
     PlateModel updatePlate(PlateModel plate);
 
     Page<PlateModel> getPlatesByPage(Long categoryId, Long restaurantId, int page, int size, String property,String sort);
+
+    String findCurrentUserId();
 }

@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.GenericFilterBean;
@@ -61,6 +62,8 @@ private final JwtService jwtService;
         }
 
         jwtService.setToken(jwt);
+//        List<String> roles = claims.get("roles", ArrayList.class);
+//        roles.stream().map(r -> new SimpleGrantedAuthority(r)).collect(Collectors.toList())
 
         List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(Roles);
         PreAuthenticatedAuthenticationToken authentication
