@@ -45,16 +45,7 @@ class OrderUseCaseTest {
     @Test
     void shouldCreateOrder() {
         //given
-        List<ClientRequestModel> clientRequestModelList = new ArrayList<>();
-        ClientRequestModel clientRequestModel = new ClientRequestModel();
-        clientRequestModel.setPlateId(1L);
-        clientRequestModel.setQuantity(1);
-        ClientRequestModel clientRequestModel2 = new ClientRequestModel();
-        clientRequestModel2.setPlateId(2L);
-        clientRequestModel2.setQuantity(1);
-        clientRequestModelList.add(clientRequestModel);
-        clientRequestModelList.add(clientRequestModel2);
-        List<PlateModel> plateModelList = new ArrayList<>();
+        List<ClientRequestModel> clientRequestModelList = OrderUseCaseFactory.getClientRequestModel();
         Set<Long> plateIds = new HashSet<>();
         PlateModel plateModel = new PlateModel();
         OrderModel orderModel = new OrderModel();
@@ -63,7 +54,6 @@ class OrderUseCaseTest {
         plateModel.setId(1L);
         plateModel.setIdRestaurant(restaurantModel);
         plateModel.setActive(true);
-        plateModelList.add(plateModel);
         PlateQuantityModel plateQuantityModel = new PlateQuantityModel();
 
        //when
@@ -237,9 +227,11 @@ class OrderUseCaseTest {
         //given
         Long orderId = 1L;
         String status = "ready";
-        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        OrderModel expected = OrderUseCaseFactory.getOrderModel();
         expected.setId(1L);
         expected.setIdClient(1L);
+        ClientModel clientModel = OrderUseCaseFactory.getClientModel();
+
 
         //when
         when(orderPersistencePort.findCurrentUserId())
@@ -251,12 +243,12 @@ class OrderUseCaseTest {
         when(orderPersistencePort.updateOrder(any()))
                 .thenReturn(expected);
         when(orderPersistencePort.findClient(expected.getIdClient()))
-                .thenReturn("+1234");
+                .thenReturn(clientModel);
         OrderModel result = orderUseCase.updateStatus(orderId, status);
 
         //then
         assertEquals(expected, result);
-        Mockito.verify(orderPersistencePort, times(1)).sendMessageReady("1234",1L);
+        Mockito.verify(orderPersistencePort, times(1)).sendMessageReady("7777777",1L);
 
 
     }
@@ -280,7 +272,7 @@ class OrderUseCaseTest {
         //given
         Long orderId = 1L;
         String status = "preparing";
-        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        OrderModel expected = OrderUseCaseFactory.getOrderModel();
 
         //when
         when(orderPersistencePort.findCurrentUserId())
@@ -300,7 +292,7 @@ class OrderUseCaseTest {
         //given
         Long orderId = 1L;
         String status = "preparing";
-        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        OrderModel expected = OrderUseCaseFactory.getOrderModel();
         expected.setStatus("preparing");
 
         //when
@@ -322,7 +314,7 @@ class OrderUseCaseTest {
         //given
         Long orderId = 1L;
         String status = "ready";
-        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        OrderModel expected = OrderUseCaseFactory.getOrderModel();
         expected.setStatus("pending");
 
         //when
@@ -344,7 +336,7 @@ class OrderUseCaseTest {
         //given
         Long orderId = 1L;
         String status = "delivered";
-        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        OrderModel expected = OrderUseCaseFactory.getOrderModel();
         expected.setStatus("preparing");
 
         //when
@@ -370,7 +362,7 @@ class OrderUseCaseTest {
     void updateToDeliveredShouldChangeStatus() {
         //given
         Long orderId = 1L;
-        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        OrderModel expected = OrderUseCaseFactory.getOrderModel();
         expected.setStatus("ready");
         expected.setIdClient(1L);
 
@@ -394,11 +386,11 @@ class OrderUseCaseTest {
     @Test
     void ShouldDeleteOrder() {
         //given
-        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        OrderModel expected = OrderUseCaseFactory.getOrderModel();
         expected.setStatus("pending");
         expected.setIdClient(1L);
         expected.setId(1L);
-
+        ClientModel clientModel = OrderUseCaseFactory.getClientModel();
 
         //when
         when(orderPersistencePort.findCurrentUserId())
@@ -406,7 +398,7 @@ class OrderUseCaseTest {
         when(orderPersistencePort.findOrderByUserId(1L))
                 .thenReturn(expected);
         when(orderPersistencePort.findClient(expected.getIdClient()))
-                .thenReturn("+1234567890");
+                .thenReturn(clientModel);
         orderUseCase.deleteOrder();
 
         //then
@@ -417,9 +409,12 @@ class OrderUseCaseTest {
     @Test
     void deleteOrderShouldThrowExceptionWhenStatusIsWrong(){
         //given
-        OrderModel expected = OrderUseCaseFactory.getRestaurantModel();
+        OrderModel expected = OrderUseCaseFactory.getOrderModel();
+        expected.setId(1L);
         expected.setStatus("preparing");
         expected.setIdClient(1L);
+        ClientModel clientModel = OrderUseCaseFactory.getClientModel();
+
 
         //when
         when(orderPersistencePort.findCurrentUserId())
@@ -427,13 +422,13 @@ class OrderUseCaseTest {
         when(orderPersistencePort.findOrderByUserId(1L))
                 .thenReturn(expected);
         when(orderPersistencePort.findClient(expected.getIdClient()))
-                .thenReturn("+1234567890");
+                .thenReturn(clientModel);
         final Throwable raisedException = catchThrowable(() -> orderUseCase.deleteOrder());
 
         //then
         assertThat(raisedException).isInstanceOf(DomainException.class)
                 .hasMessageContaining("The order has been taken, cannot be cancelled");
-        Mockito.verify(orderPersistencePort, times(1)).sendMessageRequestFail("1234567890");
+        Mockito.verify(orderPersistencePort, times(1)).sendMessageRequestFail("7777777","hzdkv@example.com");
     }
 
 

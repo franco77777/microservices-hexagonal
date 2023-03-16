@@ -25,12 +25,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestaurantController {
     private final IRestaurantHandler restaurantHandler;
-    private final IRestaurantRepository restaurantRepository;
 
-    @GetMapping()
-    public ResponseEntity<List<RestaurantResponseDto>> getAll() {
-        return ResponseEntity.ok(restaurantHandler.getAllRestaurants());
-    }
+
+//    @GetMapping()
+//    public ResponseEntity<List<RestaurantResponseDto>> getAll() {
+//        return ResponseEntity.ok(restaurantHandler.getAllRestaurants());
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<List<RestaurantResponseDto>> getByUserId(@PathVariable("id") Long userId) {
@@ -41,15 +41,14 @@ public class RestaurantController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{ownerId}")
     public ResponseEntity<RestaurantResponseDto> createRestaurant(@RequestBody @Valid RestaurantRequestDto restaurant,@PathVariable("ownerId") Long ownerId) {
-       // if(ownerId == null) throw new InfrastructureException( "ownerId is null",HttpStatus.BAD_REQUEST);
-     restaurant.setUserId(ownerId);
+        restaurant.setUserId(ownerId);
      RestaurantResponseDto response = restaurantHandler.saveRestaurant(restaurant);
      return  new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @GetMapping("/pagination")
     public ResponseEntity<RestaurantsPagesDto<Page<RestaurantPageDto>>> getRestaurantsWhitPagination(@RequestParam int page, @RequestParam int size, @RequestParam String sort) {
         Page<RestaurantPageDto> restaurantsWhitPagination = restaurantHandler.getRestaurantsByPage(page, size,sort);
-        return ResponseEntity.ok(new RestaurantsPagesDto<>(restaurantsWhitPagination.getSize(), restaurantsWhitPagination));
+        return ResponseEntity.ok(new RestaurantsPagesDto<>( restaurantsWhitPagination));
     }
 
 

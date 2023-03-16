@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 public class CategoryJpaAdapter implements ICategoryPersistencePort {
     private final ICategoryRepository categoryRepository;
     private final ICategoryEntityMapper categoryEntityMapper;
+
     @Override
     public CategoryModel createCategory(CategoryModel categoryModel) {
         if(categoryRepository.findByCategoryName(categoryModel.getCategoryName()).isPresent()) throw new InfrastructureException("Category name already exists", HttpStatus.BAD_REQUEST);

@@ -41,8 +41,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     @Override
     public OrderModel create(OrderModel order) {
         OrderEntity result = orderEntityMapper.toEntity(order);
-        OrderEntity orderEntity = orderRepository.save(result);
-        return orderEntityMapper.toModel(orderEntity);
+        return orderEntityMapper.toModel(orderRepository.save(result));
     }
 
     @Override
@@ -126,7 +125,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     public void sendMessageReady(String clientPhone, Long id) {
         if(clientPhone.equals("7777777") )return;
         try{
-            WhatsappApiFactory factory = WhatsappApiFactory.newInstance();
+            WhatsappApiFactory factory = WhatsappApiFactory.newInstance("EAADEmIApxS0BAMA14Yse0RpnNK87tslCVvUZCRvQA5VZBDFoaszwpXZBImzHEm8krdGL1MoUZAvS2HTWZCfUZAiNragxZBNI59SqnLp508YSyDbVKSlA0zOZCqhgC1v43XEfOZAzPgv98eMu863ZCds8MNKUaB2BMh8TwFvZBIm9j5S2Bu71mvMPBGwfgNwgN7681ZCY32LPdoiMEwZDZD");
             WhatsappBusinessCloudApi whatsappBusinessCloudApi = factory.newBusinessCloudApi();
             var message = Message.MessageBuilder.builder()
                     .setTo(clientPhone)
@@ -151,7 +150,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
     public void sendMessageRequestFail(String clientPhone,String email) {
         if(clientPhone.equals("7777777") )return;
         try{
-            WhatsappApiFactory factory = WhatsappApiFactory.newInstance();
+            WhatsappApiFactory factory = WhatsappApiFactory.newInstance("EAADEmIApxS0BAMA14Yse0RpnNK87tslCVvUZCRvQA5VZBDFoaszwpXZBImzHEm8krdGL1MoUZAvS2HTWZCfUZAiNragxZBNI59SqnLp508YSyDbVKSlA0zOZCqhgC1v43XEfOZAzPgv98eMu863ZCds8MNKUaB2BMh8TwFvZBIm9j5S2Bu71mvMPBGwfgNwgN7681ZCY32LPdoiMEwZDZD");
             WhatsappBusinessCloudApi whatsappBusinessCloudApi = factory.newBusinessCloudApi();
             var message = Message.MessageBuilder.builder()
                     .setTo(clientPhone)

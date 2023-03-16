@@ -12,6 +12,7 @@ import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,21 +25,19 @@ import java.util.List;
 @RequiredArgsConstructor
 
 public class PlateController {
-    private final IPlateRepository plateRepository;
-    private final IRestaurantRepository restaurantRepository;
     private final IPlateHandler plateHandler;
-    private  final ICategoryRepository categoryRepository;
 
 
-    @GetMapping()
-    public List<PlateEntity> getAll (){
-        List<PlateEntity> result = plateRepository.findAll();
-        return result;
-    }
+
+//    @GetMapping()
+//    public List<PlateEntity> getAll (){
+//        List<PlateEntity> result = plateRepository.findAll();
+//        return result;
+//    }
     @GetMapping("/pagination/{categoryId}/{restaurantId}")
     public ResponseEntity<PagesDto<Page<PlateResponseDto>>> platesPage(@PathVariable("categoryId") Long categoryId, @PathVariable("restaurantId") Long restaurantId, @RequestParam int page, @RequestParam int size, @RequestParam String sort, @RequestParam String property) {
         Page<PlateResponseDto> response = plateHandler.getPlateResponseDtoByPage(categoryId,restaurantId,page,size,property,sort);
-        return ResponseEntity.ok(new PagesDto<>(response.getSize(), response));
+        return ResponseEntity.ok(new PagesDto<>( response));
     }
 
 
@@ -46,7 +45,7 @@ public class PlateController {
     @PostMapping("/create/{categoryId}/{restaurantId}")
     public ResponseEntity<PlateResponseDto> create(@Valid @RequestBody  PlateRequestDto plate, @PathVariable("restaurantId") Long idRestaurant,@PathVariable("categoryId") Long categoryId){
         PlateResponseDto response = plateHandler.savePlate(plate,idRestaurant,categoryId);
-        return  ResponseEntity.ok(response);
+        return  new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('OWNER')")

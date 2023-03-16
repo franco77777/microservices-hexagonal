@@ -14,9 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -67,6 +64,8 @@ class UserAuthControllerTest {
         Map<String,Object> body = new HashMap<>();
         body.put("password","123");
         body.put("email","franco@gmail.com");
+        ObjectMapper mapper =  new ObjectMapper();
+        String requestJson = mapper.writeValueAsString(authenticateRequestDto);
 
         //when
         when(userHandler.userLogin(authenticateRequestDto.getEmail(),authenticateRequestDto.getPassword()))
@@ -75,8 +74,7 @@ class UserAuthControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 //.content(objectMapper.writeValueAsString(body));
-                .content("{\"email\": \"franco@gmail.com\", \"password\": \"password\", \"firstname\": \"firstname\"" +
-                        ", \"lastname\": \"lastname\", \"mobile\": \"+1234567\", \"dni\": \"1234567\"}");
+                .content(requestJson);
 
         //then
         mockMvc.perform(request)

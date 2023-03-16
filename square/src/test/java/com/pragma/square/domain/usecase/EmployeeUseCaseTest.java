@@ -1,6 +1,7 @@
 package com.pragma.square.domain.usecase;
 
 import com.pragma.square.domain.exception.DomainException;
+import com.pragma.square.domain.models.EmployeeModel;
 import com.pragma.square.domain.spi.IEmployeePersistencePort;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+
 @ExtendWith(MockitoExtension.class)
 class EmployeeUseCaseTest {
 
@@ -39,7 +43,7 @@ class EmployeeUseCaseTest {
 
         //then
         Mockito.verify(employeePersistencePort, Mockito.times(1)).restaurantBelongUserValidation(ownerId,restaurantId);
-        Mockito.verify(employeePersistencePort, Mockito.times(1)).createEmployee(restaurantId,employeeId);
+        Mockito.verify(employeePersistencePort, Mockito.times(1)).createEmployee(any(EmployeeModel.class));
     }
 
     @Test

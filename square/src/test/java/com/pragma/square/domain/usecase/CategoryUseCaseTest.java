@@ -10,6 +10,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 
 @ExtendWith(MockitoExtension.class)
 class CategoryUseCaseTest {
@@ -24,12 +28,12 @@ class CategoryUseCaseTest {
         CategoryModel expected = new CategoryModel();
 
         //when
-        Mockito.when(categoryPersistencePort.createCategory(Mockito.any()))
+        when(categoryPersistencePort.createCategory(any()))
                 .thenReturn(expected);
         CategoryModel result = categoryUseCase.createCategory(expected);
 
         //them
-        Mockito.verify(categoryPersistencePort, Mockito.times(1)).createCategory(expected);
-        Assertions.assertEquals(expected, result);
+        verify(categoryPersistencePort, times(1)).createCategory(expected);
+        assertEquals(expected, result);
     }
 }

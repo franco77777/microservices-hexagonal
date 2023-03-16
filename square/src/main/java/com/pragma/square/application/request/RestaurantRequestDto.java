@@ -25,7 +25,7 @@ public class RestaurantRequestDto {
 
    @NotBlank(message = "telephone is required")
    @Length(max = 13, message = "telephone should not have more than 13 digits")
-   @Pattern(regexp="^[0-9\\-\\+]{9,13}$", message = "incorrect telephone characters")
+   @Pattern(regexp="^[0-9\\-\\+]{5,13}$", message = "incorrect telephone characters")
    @NotNull(message = "telephone is required")
     private String telephone;
     @NotBlank(message= "url is required")

@@ -4,16 +4,13 @@ import com.pragma.square.application.handler.IOrderHandler;
 import com.pragma.square.application.request.ClientRequest;
 import com.pragma.square.application.response.OrderResponseDto;
 import com.pragma.square.application.utils.PagesDto;
-import com.pragma.square.infrastructure.output.entity.OrderEntity;
 import com.pragma.square.infrastructure.output.repository.IOrderRepository;
-import com.pragma.square.infrastructure.output.repository.IRestaurantRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/square/order")
 public class OrderController {
-    private final IRestaurantRepository restaurantRepository;
+
     private final IOrderRepository orderRepository;
     private final IOrderHandler orderHandler;
 
@@ -39,20 +36,12 @@ public class OrderController {
             @RequestParam int page, @RequestParam int size,@RequestParam String sort,
             @RequestParam String status,@RequestParam String property
     ){
-        String currentUSer = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
-        Long currentUserId = Long.parseLong(currentUSer);
-        System.out.println("soy credenciales");
-        System.out.println(currentUserId);
         Page<OrderResponseDto> pagination = orderHandler.findByStatus(page,size,sort,status,property);
-        return new ResponseEntity<>(new PagesDto<>(pagination.getSize(), pagination), HttpStatus.OK);
+        return new ResponseEntity<>(new PagesDto<>( pagination), HttpStatus.OK);
     }
     @PreAuthorize("hasRole('EMPLOYEE')")
     @PutMapping("/{orderId}")
     public ResponseEntity<OrderResponseDto> update(@PathVariable Long orderId,@RequestParam String status){
-        String currentUSer = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
-        Long currentUserId = Long.parseLong(currentUSer.split(":")[0]);
-        System.out.println("soy credenciales2");
-        System.out.println(currentUserId);
         OrderResponseDto orderResponseDto = orderHandler.updateStatus(orderId,status);
         return new ResponseEntity<>(orderResponseDto, HttpStatus.OK);
     }
@@ -70,11 +59,11 @@ public class OrderController {
 
 
 
-    @GetMapping("/all")
-    public ResponseEntity< List<OrderEntity>> getOrders() {
-        List<OrderEntity> order = orderRepository.findAll();
-        return ResponseEntity.ok(order);
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity< List<OrderEntity>> getOrders() {
+//        List<OrderEntity> order = orderRepository.findAll();
+//        return ResponseEntity.ok(order);
+//    }
 
 
 }

@@ -18,14 +18,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeController {
     private final IEmployeeHandler employeeHandler;
-    private final IEmployeeRepository employeeRepository;
+    //private final IEmployeeRepository employeeRepository;
     @PostMapping("/{OwnerId}/{restaurantId}/{employeeId}")
-    public ResponseEntity<Boolean> createEmployee(@PathVariable("OwnerId") Long OwnerId, @PathVariable("restaurantId") Long restaurantId,@PathVariable("employeeId") Long employeeId) {
-        employeeHandler.createEmployee(OwnerId,restaurantId,employeeId);
+    public ResponseEntity<Boolean> createEmployee(@PathVariable("OwnerId") Long ownerId, @PathVariable("restaurantId") Long restaurantId,@PathVariable("employeeId") Long employeeId) {
+        employeeHandler.createEmployee(ownerId,restaurantId,employeeId);
         return new ResponseEntity<>(true, HttpStatus.CREATED);
     }
-    @GetMapping
-    public ResponseEntity<List<EmployeeEntity>> get (){
-        return ResponseEntity.ok(employeeRepository.findAll());
-    }
+//    @GetMapping
+//    public ResponseEntity<List<EmployeeEntity>> get (){
+//        return ResponseEntity.ok(employeeRepository.findAll());
+//    }
 }
