@@ -3,10 +3,12 @@ package com.pragma.square.infrastructure.output.adapter;
 import com.pragma.square.domain.models.ClientModel;
 import com.pragma.square.domain.models.OrderModel;
 import com.pragma.square.domain.models.PlateModel;
+import com.pragma.square.domain.models.PlateQuantityModel;
 import com.pragma.square.domain.models.RestaurantModel;
 import com.pragma.square.infrastructure.output.entity.EmployeeEntity;
 import com.pragma.square.infrastructure.output.entity.OrderEntity;
 import com.pragma.square.infrastructure.output.entity.PlateEntity;
+import com.pragma.square.infrastructure.output.entity.PlateQuantityEntity;
 import com.pragma.square.infrastructure.output.entity.RestaurantEntity;
 import com.pragma.square.infrastructure.output.mapper.IOrderEntityMapper;
 import com.pragma.square.infrastructure.output.mapper.IPlateEntityMapper;
@@ -38,7 +40,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderJpaAdapterTest {
@@ -227,30 +229,84 @@ UserService userService;
         //when
         when(userService.getClient(anyLong()))
                 .thenReturn(expected);
-        ClientModel result = orderJpaAdapter.
-    }
+        ClientModel result = orderJpaAdapter.findClient(1L);
+
+    //then
+        assertEquals(expected, result);
+        }
     //////////////////////////////////////// <-- DELETE ORDER --> ///////////////////////////////
     @Test
     void deleteOrder() {
+        //given
+        //when
+        orderJpaAdapter.deleteOrder(1L);
+
+        //then
+        verify(orderRepository,times(1)).deleteById(1L);
     }
     //////////////////////////////////////// <-- CREATE PLATE QUANTITY --> ///////////////////////////////
     @Test
-    void createPlateQuantity() {
+    void createPlateQuantityShouldReturnPlateQuantityModel() {
+        //given
+        PlateQuantityEntity plateQuantityEntity = new PlateQuantityEntity();
+        PlateQuantityEntity plateQuantityEntity2 = new PlateQuantityEntity();
+        PlateQuantityModel plateQuantityModel = new PlateQuantityModel();
+        PlateQuantityModel expected = new PlateQuantityModel();
+
+        //when
+        when(plateQuantityEntityMapper.toEntity(any(PlateQuantityModel.class)))
+                .thenReturn(plateQuantityEntity);
+        when(plateQuantityRepository.save(any(PlateQuantityEntity.class)))
+                .thenReturn(plateQuantityEntity2);
+        when(plateQuantityEntityMapper.toModel(any(PlateQuantityEntity.class)))
+                .thenReturn(expected);
+        PlateQuantityModel result = orderJpaAdapter.createPlateQuantity(plateQuantityModel);
+
+        //then
+        assertEquals(expected, result);
     }
     //////////////////////////////////////// <-- FIND ORDER BY USER ID --> ///////////////////////////////
     @Test
-    void findOrderByUserId() {
+    void findOrderByUserIdShouldReturnOrderModel() {
+        //given
+        OrderEntity orderEntity = new OrderEntity();
+        OrderModel expected = new OrderModel();
+
+        //when
+        when(orderRepository.findByIdClient(anyLong()))
+                .thenReturn(Optional.of(orderEntity));
+        when(orderEntityMapper.toModel(any(OrderEntity.class)))
+                .thenReturn(expected);
+        OrderModel result = orderJpaAdapter.findOrderByUserId(anyLong());
+
+        //then
+        assertEquals(expected, result);
     }
     //////////////////////////////////////// <-- FIND CURRENT USER ID --> ///////////////////////////////
     @Test
-    void findCurrentUserId() {
+    void findCurrentUserIdShoudlReturnString() {
+        //given
+        Authentication auth = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+        String expected = "1";
+
+        //when
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        when(auth.getCredentials()).thenReturn("1");
+        String result = orderJpaAdapter.findCurrentUserId();
+
+        //then
+        assertEquals(expected, result);
     }
     //////////////////////////////////////// <-- SEND MESSAGE READY --> ///////////////////////////////
     @Test
     void sendMessageReady() {
+        orderJpaAdapter.sendMessageReady("7777777",1L);
     }
     //////////////////////////////////////// <-- SEND MESSAGE REQUEST FAIL --> ///////////////////////////////
     @Test
     void sendMessageRequestFail() {
-    }
+        orderJpaAdapter.sendMessageRequestFail("7777777","frannco");
+          }
 }
