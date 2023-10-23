@@ -1,15 +1,15 @@
 package com.pragma.gatewayservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
+
 public class TokenDto {
 
     private String token;
+
+
 }

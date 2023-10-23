@@ -10,7 +10,7 @@ spring:
    datasource:
       url: jdbc:mysql://localhost:3306/pragma_plazoleta
       username: root
-      password: aresis4351850
+      password: password
       driver-class-name: com.mysql.cj.jdbc.Driver
    jpa:
       show-sql: false

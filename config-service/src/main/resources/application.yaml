@@ -5,8 +5,8 @@ spring:
     config:
       server:
         git:
-          default-label: testing
+          default-label: testing #aqui elegimos la rama de git
           uri: https://github.com/franco77777/microservices-hexagonal
-          search-paths: config-data
+          search-paths: config-data #escogemos el archivo que usara para configurar la entrada a los otros proyectos
   application:
     name: config-service

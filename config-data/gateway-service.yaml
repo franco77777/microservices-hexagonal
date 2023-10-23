@@ -18,7 +18,7 @@ spring:
           enabled: true
       routes:
         - id: users-service
-          uri: lb://users-service
+          uri: lb://users-service #lb significa load balancer
           predicates:
             - Path=/user/**
 

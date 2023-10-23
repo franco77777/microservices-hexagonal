@@ -1,12 +1,12 @@
 package com.pragma.square;
 
-import com.whatsapp.api.WhatsappApiFactory;
-import com.whatsapp.api.domain.messages.*;
-import com.whatsapp.api.domain.messages.response.MessageResponse;
-import com.whatsapp.api.domain.messages.type.ButtonType;
-import com.whatsapp.api.domain.messages.type.InteractiveMessageType;
-import com.whatsapp.api.exception.utils.Formatter;
-import com.whatsapp.api.impl.WhatsappBusinessCloudApi;
+//import com.whatsapp.api.WhatsappApiFactory;
+//import com.whatsapp.api.domain.messages.*;
+//import com.whatsapp.api.domain.messages.response.MessageResponse;
+//import com.whatsapp.api.domain.messages.type.ButtonType;
+//import com.whatsapp.api.domain.messages.type.InteractiveMessageType;
+//import com.whatsapp.api.exception.utils.Formatter;
+//import com.whatsapp.api.impl.WhatsappBusinessCloudApi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
